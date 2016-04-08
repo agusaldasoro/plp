@@ -23,13 +23,13 @@ mean xs = realToFrac (sum xs) / genericLength xs
 
 split :: Eq a => a -> [a] -> [[a]]
 split = (\delim xs -> filter (not . null) (foldr (separarSegunDelim delim) [[]] xs))
-  
+
 separarSegunDelim :: Eq a => a -> a -> [[a]] -> [[a]]
-separarSegunDelim delim actual rec = 
-  if delim == actual then 
-    []:rec 
+separarSegunDelim delim actual rec =
+  if delim == actual then
+    []:rec
   else
-    ((actual : (head rec)) : tail rec)  
+    ((actual : (head rec)) : tail rec)
 
 -- Ejercicio 2 --
 
@@ -70,16 +70,19 @@ frecuenciaRelativa token texto = fromIntegral(fst(head(filter (segundoEsIgual to
 tokens :: [Char]
 tokens = "_,)(*;-=>/.{}\"&:+#[]<|%!\'@?~^$` abcdefghijklmnopqrstuvwxyz0123456789"
 
--- Ejercicio 6 -- 
+-- Ejercicio 6 --
 
 normalizarExtractor :: [Texto] -> Extractor -> Extractor
-normalizarExtractor textos ext = (\texto -> (ext texto) / maximo) 
+normalizarExtractor textos ext = (\texto -> (ext texto) / maximo)
   where maximo = maximum (map (abs . ext) textos)
 
--- Ejercicio 7 --     
+-- Ejercicio 7 --
 
 extraerFeatures :: [Extractor] -> [Texto] -> Datos
-extraerFeatures = undefined
+extraerFeatures = \es ts -> map (extraer (extractoresNormalizados es ts)) ts 
+    where
+      extractoresNormalizados es ts = map (normalizarExtractor ts) es
+      extraer es t = map ($ t) es
 
 -- Ejercicio 8 --
 
