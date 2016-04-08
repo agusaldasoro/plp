@@ -91,30 +91,23 @@ distCoseno = undefined
 
 -- Ejercicio 9 --
 
---knn :: Int -> [[Float]] -> [String]   -> ([Float] -> [Float] -> Float) -> ([Float] -> String)
-knn :: Int -> Datos     -> [Etiqueta] -> Medida                        -> Modelo
-knn = undefined
---knn k datos etiquetas medida = (\instanciaAEtiquetar -> modaEstadistica (agarrarMasCercanos k (obtenerEtiquetas calcularDistancias etiquetas) ) )
---        where calcularDistancias = map (medida instanciaAEtiquetar) datos
---              obtenerEtiquetas   = zip
+knn :: Int -> Datos -> [Etiqueta] -> Medida -> Modelo
+knn k datos etiquetas medida = (\instanciaAEtiquetar -> (masApariciones. (take k) .sort) (zip (distancias instanciaAEtiquetar) etiquetas))
+                                                            where distancias = calcularDistancias medida datos
 
---agarrarMasCercanos :: Eq a => Int -> [(a,b)] -> [(a,b)]
---agarrarMasCercanos _ [] = []
---agarrarMasCercanos 0 _  = []
---agarrarMasCercanos k ls = agarrarMaximo ls : (agarrarMasCercanos (k-1) (sacar (agarrarMaximo ls) ls)) 
+calcularDistancias :: Medida -> Datos -> Instancia -> Instancia
+calcularDistancias medida datos instancia = map (medida instancia) datos
 
---agarrarMaximo :: Eq a => [(a,b)] -> (a,b)
---agarrarMaximo l:[] = l
---agarrarMaximo l:r:ls = if (fst l) > (fst r) then agarrarMaximo l:ls else r:ls
+masApariciones :: [(Feature, Etiqueta)] -> Etiqueta
+masApariciones xs = (snd.head.sort) (map (contarApariciones xs) xs)
 
---sacar :: Eq a => (a,b) -> [(a,b)] -> [(a,b)]
---sacar _ [] = []
---sacar a x:xs = if a == x then xs else x:(sacar a xs)
+contarApariciones ::  [(Feature, Etiqueta)] -> (Feature, Etiqueta) -> (Int, Etiqueta)
+contarApariciones xs x = (contar (map snd xs) (snd x), snd x)
 
 -- Ejercicio 10 --
 
 separarDatos :: Datos -> [Etiqueta] -> Int -> Int -> (Datos, Datos, [Etiqueta], [Etiqueta])
-separarDatos xs y n p = (entrenamiento q xs m r, validacion q m xs, entrenamiento q y m r,validacion q m y)
+separarDatos xs y n p = (entrenamiento q xs m r, validacion q m xs, entrenamiento q y m r, validacion q m y)
       where t = (length xs) `div` n
             m = p * t
             q = (p - 1) * t
