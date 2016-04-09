@@ -63,9 +63,9 @@ frecuenciaTokens = map frecuenciaRelativa tokens
 frecuenciaRelativa :: Char -> Extractor
 frecuenciaRelativa = \token texto ->
         let total = (fromIntegral . length) texto
-            repeticionesDelToken = \tuplas -> head $ filter (\tupla -> (snd tupla) == token) tuplas
-            meQuedoConElToken = \tuplas -> fromIntegral $ fst $ repeticionesDelToken tuplas
-        in meQuedoConElToken (cuentas texto) / total
+            repeticionesDelToken = head $ filter (\tupla -> (snd tupla) == token) $ cuentas texto
+            aparicionesDelToken = fromIntegral $ fst $ repeticionesDelToken 
+        in  aparicionesDelToken / total
 
 tokens :: [Char]
 tokens = "_,)(*;-=>/.{}\"&:+#[]<|%!\'@?~^$` abcdefghijklmnopqrstuvwxyz0123456789"
