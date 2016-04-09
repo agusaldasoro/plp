@@ -22,14 +22,19 @@ mean xs = realToFrac (sum xs) / genericLength xs
 -- Ejercicio 1 --
 
 split :: Eq a => a -> [a] -> [[a]]
-split = \delim xs -> filter (not . null) $ foldr (f delim) [[]] xs
-        where f delim actual (x:xs) =
+split = \delim xs -> sinVacios $ foldr (f delim) [[]] xs
+        where sinVacios = filter (not . null)
+              f delim actual (x:xs) =
                 if delim == actual then [] : (x : xs) else (actual : x) : xs
+
 
 -- Ejercicio 2 --
 
 longitudPromedioPalabras :: Extractor
-longitudPromedioPalabras = \texto -> mean $ map genericLength $ split ' ' texto
+longitudPromedioPalabras = \texto -> mean $ map genericLength $ palabras texto
+
+palabras :: Texto -> [Texto]
+palabras = split ' '
 
 -- Ejercicio 3 --
 
@@ -43,15 +48,12 @@ sacarRepetidos xs = foldl f [] xs
 
 contarRepeticiones :: Eq a => [a] -> a -> Int
 contarRepeticiones lista elemento = foldr (+) 0 $ map (beta . (==elemento)) lista
-
-beta :: Bool -> Int
-beta True = 1
-beta False = 0
+        where beta = \x -> if x then 1 else 0
 
 -- Ejercicio 4 --
 
 repeticionesPromedio :: Extractor
-repeticionesPromedio = \xs -> mean $ map (fromIntegral. fst) $ cuentas $ split ' ' xs
+repeticionesPromedio = \xs -> mean $ map (fromIntegral. fst) $ cuentas $ palabras xs
 
 -- Ejercicio 5 --
 
@@ -59,8 +61,11 @@ frecuenciaTokens :: [Extractor]
 frecuenciaTokens = map frecuenciaRelativa tokens
 
 frecuenciaRelativa :: Char -> Extractor
-frecuenciaRelativa token texto = fromIntegral(fst(head(filter (segundoEsIgual token) (cuentas texto)))) / (fromIntegral (length texto))
-        where segundoEsIgual token = (\tupla -> (snd tupla) == token)
+frecuenciaRelativa = \token texto ->
+        let total = (fromIntegral . length) texto
+            repeticionesDelToken = \tuplas -> head $ filter (\tupla -> (snd tupla) == token) tuplas
+            meQuedoConElToken = \tuplas -> fromIntegral $ fst $ repeticionesDelToken tuplas
+        in meQuedoConElToken (cuentas texto) / total
 
 tokens :: [Char]
 tokens = "_,)(*;-=>/.{}\"&:+#[]<|%!\'@?~^$` abcdefghijklmnopqrstuvwxyz0123456789"
@@ -68,16 +73,17 @@ tokens = "_,)(*;-=>/.{}\"&:+#[]<|%!\'@?~^$` abcdefghijklmnopqrstuvwxyz0123456789
 -- Ejercicio 6 --
 
 normalizarExtractor :: [Texto] -> Extractor -> Extractor
-normalizarExtractor textos ext = (\texto -> (ext texto) / maximo)
-  where maximo = maximum (map (abs . ext) textos)
+normalizarExtractor = \textos ext texto ->
+        let maximo = maximum $ map (abs . ext) textos
+        in (ext texto) / maximo
 
 -- Ejercicio 7 --
 
 extraerFeatures :: [Extractor] -> [Texto] -> Datos
-extraerFeatures = \es ts -> map (extraer (extractoresNormalizados es ts)) ts
-    where
-      extractoresNormalizados es ts = map (normalizarExtractor ts) es
-      extraer es t = map ($ t) es
+extraerFeatures = \es textos ->
+        let extractoresNormalizados = map (normalizarExtractor textos) es
+            extraer = \texto -> map ($ texto) extractoresNormalizados
+        in map extraer textos
 
 -- Ejercicio 8 --
 
@@ -90,14 +96,16 @@ distCoseno = undefined
 -- Ejercicio 9 --
 
 knn :: Int -> Datos -> [Etiqueta] -> Medida -> Modelo
-knn k datos etiquetas medida = (\instanciaAEtiquetar -> (masApariciones. (take k) .sort) (zip (distancias instanciaAEtiquetar) etiquetas))
-                                                            where distancias = calcularDistancias medida datos
+knn = \k datos etiquetas medida instanciaAEtiquetar ->
+        let distancias = calcularDistancias medida datos instanciaAEtiquetar
+        in (masApariciones . (take k) . sort) $ zip distancias etiquetas
+
 
 calcularDistancias :: Medida -> Datos -> Instancia -> Instancia
 calcularDistancias medida datos instancia = map (medida instancia) datos
 
 masApariciones :: [(Feature, Etiqueta)] -> Etiqueta
-masApariciones xs = (snd.head.sort) (map (contarApariciones xs) xs)
+masApariciones xs = (snd . head . sort) $ map (contarApariciones xs) xs
 
 contarApariciones ::  [(Feature, Etiqueta)] -> (Feature, Etiqueta) -> (Int, Etiqueta)
 contarApariciones xs x = (contarRepeticiones (map snd xs) (snd x), snd x)
@@ -112,10 +120,10 @@ separarDatos xs y n p = (entrenamiento q xs m r, validacion q m xs, entrenamient
             r = n * t
 
 entrenamiento :: Int -> [a] -> Int -> Int -> [a]
-entrenamiento q xs m r = (take q xs) ++ (drop m (take r xs))
+entrenamiento q xs m r = (take q xs) ++ (drop m $ take r xs)
 
 validacion :: Int -> Int -> [a] -> [a]
-validacion q m xs = drop q (take m xs)
+validacion q m xs = drop q $ take m xs
 
 -- Ejercicio 11 --
 
