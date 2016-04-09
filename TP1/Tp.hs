@@ -64,7 +64,7 @@ frecuenciaRelativa :: Char -> Extractor
 frecuenciaRelativa = \token texto ->
         let total = (fromIntegral . length) texto
             repeticionesDelToken = head $ filter (\tupla -> (snd tupla) == token) $ cuentas texto
-            aparicionesDelToken = fromIntegral $ fst $ repeticionesDelToken 
+            aparicionesDelToken = fromIntegral $ fst $ repeticionesDelToken
         in  aparicionesDelToken / total
 
 tokens :: [Char]
@@ -88,10 +88,10 @@ extraerFeatures = \es textos ->
 -- Ejercicio 8 --
 
 distEuclideana :: Medida
-distEuclideana xs ys = sqrt $ sum $ map (\tupla -> ((fst tupla) - (snd tupla))^2) $ zip xs ys 
+distEuclideana = \xs ys -> sqrt $ sum $ map (\tupla -> ((fst tupla) - (snd tupla))^2) $ zip xs ys
 
 distCoseno :: Medida
-distCoseno xs ys = (productoEscalar xs ys)/((normaVectorial xs)*(normaVectorial ys))
+distCoseno = \xs ys -> (productoEscalar xs ys) / ((normaVectorial xs) * (normaVectorial ys))
 
 productoEscalar :: Medida
 productoEscalar xs ys = sum $ map (\tupla -> (fst tupla)*(snd tupla)) $ zip xs ys
@@ -120,10 +120,10 @@ contarApariciones xs x = (contarRepeticiones (map snd xs) (snd x), snd x)
 
 separarDatos :: Datos -> [Etiqueta] -> Int -> Int -> (Datos, Datos, [Etiqueta], [Etiqueta])
 separarDatos xs y n p = (entrenamiento q xs m r, validacion q m xs, entrenamiento q y m r, validacion q m y)
-      where t = (length xs) `div` n
-            m = p * t
-            q = (p - 1) * t
-            r = n * t
+        where t = (length xs) `div` n
+              m = p * t
+              q = (p - 1) * t
+              r = n * t
 
 entrenamiento :: Int -> [a] -> Int -> Int -> [a]
 entrenamiento q xs m r = (take q xs) ++ (drop m $ take r xs)
@@ -134,9 +134,22 @@ validacion q m xs = drop q $ take m xs
 -- Ejercicio 11 --
 
 accuracy :: [Etiqueta] -> [Etiqueta] -> Float
-accuracy xs ys  = mean $ map (beta.(\tupla -> snd tupla == fst tupla)) $ zip xs ys
-				where beta = \x -> if x then 1 else 0
+accuracy = \xs ys -> mean $ map (beta . \tupla -> snd tupla == fst tupla) $ zip xs ys
+        where beta = \x -> if x then 1 else 0
+
 -- Ejercicio 12 --
 
 nFoldCrossValidation :: Int -> Datos -> [Etiqueta] -> Float
-nFoldCrossValidation = undefined
+nFoldCrossValidation = \n datos etiquetas ->
+        let ps = [1 .. n]
+            separar p = separarDatos datos etiquetas n p
+            obtenerModelo = \tupla -> knn 15 (datosEnt tupla) (etiEnt tupla) distEuclideana
+            aplicarModelo = \tupla -> (etiVal tupla, map (obtenerModelo tupla) (datosVal tupla))
+            calcularAcurracy = \tupla -> accuracy (fst tupla) (snd tupla)
+        in mean $ map (calcularAcurracy . aplicarModelo . separar) ps
+
+
+datosEnt (x, _, _, _) = x
+datosVal (_, x, _, _) = x
+etiEnt (_, _, x, _) = x
+etiVal (_, _, _, x) = x
