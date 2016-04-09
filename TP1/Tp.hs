@@ -88,10 +88,16 @@ extraerFeatures = \es textos ->
 -- Ejercicio 8 --
 
 distEuclideana :: Medida
-distEuclideana = undefined
+distEuclideana xs ys = sqrt $ sum $ map (\tupla -> ((fst tupla) - (snd tupla))^2) $ zip xs ys 
 
 distCoseno :: Medida
-distCoseno = undefined
+distCoseno xs ys = (productoEscalar xs ys)/((normaVectorial xs)*(normaVectorial ys))
+
+productoEscalar :: Medida
+productoEscalar xs ys = sum $ map (\tupla -> (fst tupla)*(snd tupla)) $ zip xs ys
+
+normaVectorial :: Instancia -> Float
+normaVectorial xs = sqrt $ productoEscalar xs xs
 
 -- Ejercicio 9 --
 
@@ -128,8 +134,8 @@ validacion q m xs = drop q $ take m xs
 -- Ejercicio 11 --
 
 accuracy :: [Etiqueta] -> [Etiqueta] -> Float
-accuracy = undefined
-
+accuracy xs ys  = mean $ map (beta.(\tupla -> snd tupla == fst tupla)) $ zip xs ys
+				where beta = \x -> if x then 1 else 0
 -- Ejercicio 12 --
 
 nFoldCrossValidation :: Int -> Datos -> [Etiqueta] -> Float
