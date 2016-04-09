@@ -22,32 +22,27 @@ mean xs = realToFrac (sum xs) / genericLength xs
 -- Ejercicio 1 --
 
 split :: Eq a => a -> [a] -> [[a]]
-split = (\delim xs -> filter (not . null) (foldr (separarSegunDelim delim) [[]] xs))
-
-separarSegunDelim :: Eq a => a -> a -> [[a]] -> [[a]]
-separarSegunDelim delim actual rec =
-  if delim == actual then
-    []:rec
-  else
-    ((actual : (head rec)) : tail rec)
+split = \delim xs -> filter (not . null) $ foldr (f delim) [[]] xs
+        where f delim actual (x:xs) =
+                if delim == actual then [] : (x : xs) else (actual : x) : xs
 
 -- Ejercicio 2 --
 
 longitudPromedioPalabras :: Extractor
-longitudPromedioPalabras = (\texto -> mean (map genericLength (split ' ' texto)))
+longitudPromedioPalabras = \texto -> mean $ map genericLength $ split ' ' texto
 
 -- Ejercicio 3 --
 
 cuentas :: Eq a => [a] -> [(Int, a)]
-cuentas = (\xs -> sacarRepetidos (zip (map (contar xs) xs) xs))
+cuentas = \xs -> sacarRepetidos $ zip (repeticiones xs) xs
+        where repeticiones = \xs -> map (contarRepeticiones xs) xs
 
 sacarRepetidos :: Eq a => [a] -> [a]
 sacarRepetidos xs = foldl f [] xs
-  where f rec x = if x `elem` rec then rec else rec ++ [x]
+        where f rec x = if x `elem` rec then rec else rec ++ [x]
 
-contar :: Eq a => [a] -> a -> Int
-contar lista elemento = foldr (+) 0 (map beta esIgual)
-          where esIgual = map (==elemento) lista
+contarRepeticiones :: Eq a => [a] -> a -> Int
+contarRepeticiones lista elemento = foldr (+) 0 $ map (beta . (==elemento)) lista
 
 beta :: Bool -> Int
 beta True = 1
@@ -56,7 +51,7 @@ beta False = 0
 -- Ejercicio 4 --
 
 repeticionesPromedio :: Extractor
-repeticionesPromedio = (\xs -> mean (map (fromIntegral. fst) (cuentas (split ' ' xs))))
+repeticionesPromedio = \xs -> mean $ map (fromIntegral. fst) $ cuentas $ split ' ' xs
 
 -- Ejercicio 5 --
 
@@ -65,7 +60,7 @@ frecuenciaTokens = map frecuenciaRelativa tokens
 
 frecuenciaRelativa :: Char -> Extractor
 frecuenciaRelativa token texto = fromIntegral(fst(head(filter (segundoEsIgual token) (cuentas texto)))) / (fromIntegral (length texto))
-  where segundoEsIgual token = (\tupla -> (snd tupla) == token)
+        where segundoEsIgual token = (\tupla -> (snd tupla) == token)
 
 tokens :: [Char]
 tokens = "_,)(*;-=>/.{}\"&:+#[]<|%!\'@?~^$` abcdefghijklmnopqrstuvwxyz0123456789"
@@ -79,7 +74,7 @@ normalizarExtractor textos ext = (\texto -> (ext texto) / maximo)
 -- Ejercicio 7 --
 
 extraerFeatures :: [Extractor] -> [Texto] -> Datos
-extraerFeatures = \es ts -> map (extraer (extractoresNormalizados es ts)) ts 
+extraerFeatures = \es ts -> map (extraer (extractoresNormalizados es ts)) ts
     where
       extractoresNormalizados es ts = map (normalizarExtractor ts) es
       extraer es t = map ($ t) es
@@ -105,7 +100,7 @@ masApariciones :: [(Feature, Etiqueta)] -> Etiqueta
 masApariciones xs = (snd.head.sort) (map (contarApariciones xs) xs)
 
 contarApariciones ::  [(Feature, Etiqueta)] -> (Feature, Etiqueta) -> (Int, Etiqueta)
-contarApariciones xs x = (contar (map snd xs) (snd x), snd x)
+contarApariciones xs x = (contarRepeticiones (map snd xs) (snd x), snd x)
 
 -- Ejercicio 10 --
 
