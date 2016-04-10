@@ -1,4 +1,4 @@
-module Tp where
+module Solucion where
 
 import Data.List
 
@@ -63,8 +63,9 @@ frecuenciaTokens = map frecuenciaRelativa tokens
 frecuenciaRelativa :: Char -> Extractor
 frecuenciaRelativa = \token texto ->
         let total = (fromIntegral . length) texto
-            repeticionesDelToken = head $ filter (\tupla -> (snd tupla) == token) $ cuentas texto
-            aparicionesDelToken = fromIntegral $ fst $ repeticionesDelToken
+            repeticionesDelToken = filter (\tupla -> (snd tupla) == token) $ cuentas texto
+            extraerToken = if not . null $ repeticionesDelToken then head repeticionesDelToken else (0 , token) 
+            aparicionesDelToken = fromIntegral $ fst $ extraerToken
         in  aparicionesDelToken / total
 
 tokens :: [Char]
