@@ -14,7 +14,10 @@ allTests = test [
  	"split" ~: testsSplit,
   "longPromedioPalabras" ~: testsLongitudPromedioPalabras,
  	"cuentas" ~: testsCuentas,
-  "frecuenciaTokens" ~: testsFrecuenciaTokens
+  "frecuenciaTokens" ~: testsFrecuenciaTokens,
+  "distEuclediana" ~: testsDistEuclediana,
+  "distCoseno" ~: testsDistCoseno,
+  "acurracy" ~: testsAcurracy
   ]
 
 testsSplit = test [
@@ -40,8 +43,27 @@ testsFrecuenciaTokens = test [
   buscarExtractor '!' "use_snake_case !" ~?= 0.0625,
   buscarExtractor 's' "use_snake_case !" ~?= 0.1875,
   buscarExtractor 'h' "use_snake_case !" ~?= 0.0,
-  buscarExtractor 'h' "" ~?= 0.0,
-  buscarExtractor 'a' ['a' | x <- [1 .. mucho]] ~?= 1
+  buscarExtractor 'a' (replicate mucho 'a') ~?= 1
+  ]
+
+testsDistEuclediana = test [
+  distEuclideana [1.0,0.75,0.8125] [0.75,1.0,0.5] ~?= 0.47186464,
+  distEuclideana [1.0] [1.0] ~?= 0,
+  distEuclideana [14.0, 9.0] [9.0, 14.0] ~?= 7.071068,
+  distEuclideana (replicate mucho 1.0) (replicate mucho 0.0) ~?= sqrt (fromIntegral mucho)
+  ]
+
+testsDistCoseno = test [
+  distCoseno [1.0, 2.0, 3.0] [1.0, 2.0, 3.0] ~?= 0.99999994,
+  distCoseno [1.0] [2.0] ~?= 1,
+  distCoseno (replicate mucho 1.0) (replicate mucho 2.0) ~?= 1.0
+  ]
+
+testsAcurracy = test [
+  accuracy ["f", "f", "i", "i", "f"] ["i", "f", "i", "f", "f"] ~?= 0.6,
+  accuracy ["f", "i"] ["f", "f"] ~?= 0.5,
+  accuracy ["f", "f", "i", "i", "f"] ["f", "f", "i", "i", "f"] ~?= 1.0,
+  accuracy (replicate mucho "f") [if x `mod` 2 == 0 then "f" else "i" | x <- [1 .. mucho]] ~?= 0.5
   ]
 
 buscarExtractor = \tok ->
