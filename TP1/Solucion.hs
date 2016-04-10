@@ -120,17 +120,18 @@ contarApariciones xs x = (contarRepeticiones (map snd xs) (snd x), snd x)
 -- Ejercicio 10 --
 
 separarDatos :: Datos -> [Etiqueta] -> Int -> Int -> (Datos, Datos, [Etiqueta], [Etiqueta])
-separarDatos xs y n p = (entrenamiento q xs m r, validacion q m xs, entrenamiento q y m r, validacion q m y)
-        where t = (length xs) `div` n
-              m = p * t
-              q = (p - 1) * t
-              r = n * t
+separarDatos = \xs y n p -> 
+      let t = (length xs) `div` n
+          finPrimera    = (p - 1) * t
+          finValidacion = p * t
+          finSegunda    = n * t
+      in        (sublista 1 finPrimera xs ++ sublista (finValidacion+1) finSegunda xs,
+                 sublista (finPrimera+1) finValidacion xs,
+                 sublista 1 finPrimera y ++ sublista (finValidacion+1) finSegunda y,
+                 sublista (finPrimera+1) finValidacion y)
 
-entrenamiento :: Int -> [a] -> Int -> Int -> [a]
-entrenamiento q xs m r = (take q xs) ++ (drop m $ take r xs)
-
-validacion :: Int -> Int -> [a] -> [a]
-validacion q m xs = drop q $ take m xs
+sublista :: Int -> Int -> [a] -> [a]
+sublista comienzo fin xs = drop (comienzo-1) $ take fin xs
 
 -- Ejercicio 11 --
 
