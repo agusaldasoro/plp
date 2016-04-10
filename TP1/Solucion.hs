@@ -39,8 +39,10 @@ palabras = split ' '
 -- Ejercicio 3 --
 
 cuentas :: Eq a => [a] -> [(Int, a)]
-cuentas = \xs -> sacarRepetidos $ zip (repeticiones xs) xs
-        where repeticiones = \xs -> map (contarRepeticiones xs) xs
+cuentas = \xs -> 
+        let repeticiones = map (contarRepeticiones xs) sinRepetidos
+            sinRepetidos = sacarRepetidos xs
+        in zip repeticiones sinRepetidos 
 
 sacarRepetidos :: Eq a => [a] -> [a]
 sacarRepetidos xs = foldl f [] xs
@@ -107,15 +109,14 @@ knn = \k datos etiquetas medida instanciaAEtiquetar ->
         let distancias = calcularDistancias medida datos instanciaAEtiquetar
         in (masApariciones . (take k) . sort) $ zip distancias etiquetas
 
-
 calcularDistancias :: Medida -> Datos -> Instancia -> Instancia
-calcularDistancias medida datos instancia = map (medida instancia) datos
+calcularDistancias = \medida datos instancia -> map (medida instancia) datos
 
 masApariciones :: [(Feature, Etiqueta)] -> Etiqueta
-masApariciones xs = (snd . head . sort) $ map (contarApariciones xs) xs
+masApariciones = \xs -> (snd . head . sort) $ map (contarApariciones xs) xs
 
 contarApariciones ::  [(Feature, Etiqueta)] -> (Feature, Etiqueta) -> (Int, Etiqueta)
-contarApariciones xs x = (contarRepeticiones (map snd xs) (snd x), snd x)
+contarApariciones = \xs x -> (contarRepeticiones (map snd xs) (snd x), snd x)
 
 -- Ejercicio 10 --
 
