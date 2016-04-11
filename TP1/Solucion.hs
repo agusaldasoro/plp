@@ -107,9 +107,7 @@ tokens = "_,)(*;-=>/.{}\"&:+#[]<|%!\'@?~^$` abcdefghijklmnopqrstuvwxyz0123456789
 --Toma por cada valor obtenido del extractor su valor absoluto,
 --para luego dividirlo por el maximo del texto y asi tener el vector normalizado.
 normalizarExtractor :: [Texto] -> Extractor -> Extractor
-normalizarExtractor = \textos ext texto ->
-        let maximo = maximum $ map (abs . ext) textos
-        in (ext texto) / maximo
+normalizarExtractor = \textos ext texto -> (ext texto) / (maximum $ map (abs . ext) textos)
 
 -----------------
 -- Ejercicio 7 --
@@ -118,10 +116,7 @@ normalizarExtractor = \textos ext texto ->
 --Primero se normalizan los extractores pasados como parametro.
 --Luego, se calculan para todo el texto.
 extraerFeatures :: [Extractor] -> [Texto] -> Datos
-extraerFeatures = \es textos ->
-        let extractoresNormalizados = map (normalizarExtractor textos) es
-            extraer = \texto -> map ($ texto) extractoresNormalizados
-        in map extraer textos
+extraerFeatures = \es textos -> map (\texto -> map ($ texto) (map (normalizarExtractor textos) es)) textos
 
 -----------------
 -- Ejercicio 8 --
