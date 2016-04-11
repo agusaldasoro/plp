@@ -113,10 +113,7 @@ calcularDistancias :: Medida -> Datos -> Instancia -> Instancia
 calcularDistancias = \medida datos instancia -> map (medida instancia) datos
 
 masApariciones :: [(Feature, Etiqueta)] -> Etiqueta
-masApariciones = \xs -> (snd . last  . sort) $ map (contarApariciones xs) xs
-
-contarApariciones ::  [(Feature, Etiqueta)] -> (Feature, Etiqueta) -> (Int, Etiqueta)
-contarApariciones = \xs x -> (contarRepeticiones (map snd xs) (snd x), snd x)
+masApariciones = \xs -> snd $ maximum $ cuentas $ map snd xs
 
 -- Ejercicio 10 --
 
@@ -167,10 +164,9 @@ nFoldCrossValidation = \n datos etiquetas ->
               in (etiquetaValidacion, map modelo datosValidacion)
         in mean $ map (calcularAccuracy . aplicarModelo . generarTupla) ps
 
+-- aplicarModelo = \tupla -> (etiVal tupla, map (knn 15 (datosEnt tupla) (etiEnt tupla) distEuclideana) (datosVal tupla))
+
 datosEnt (x, _, _, _) = x
 datosVal (_, x, _, _) = x
 etiEnt (_, _, x, _) = x
 etiVal (_, _, _, x) = x
-
-
--- aplicarModelo = \tupla -> (etiVal tupla, map (knn 15 (datosEnt tupla) (etiEnt tupla) distEuclideana) (datosVal tupla))
