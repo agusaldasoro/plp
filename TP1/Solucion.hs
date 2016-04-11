@@ -55,7 +55,7 @@ contarRepeticiones lista elemento = foldr (+) 0 $ map (beta . (==elemento)) list
 -- Ejercicio 4 --
 
 repeticionesPromedio :: Extractor
-repeticionesPromedio = \xs -> mean $ map (fromIntegral. fst) $ cuentas $ palabras xs
+repeticionesPromedio = \xs -> mean $ map (fromIntegral . fst) $ cuentas $ palabras xs
 
 -- Ejercicio 5 --
 
@@ -113,7 +113,7 @@ calcularDistancias :: Medida -> Datos -> Instancia -> Instancia
 calcularDistancias = \medida datos instancia -> map (medida instancia) datos
 
 masApariciones :: [(Feature, Etiqueta)] -> Etiqueta
-masApariciones = \xs -> (snd . head . sort) $ map (contarApariciones xs) xs
+masApariciones = \xs -> (snd . last  . sort) $ map (contarApariciones xs) xs
 
 contarApariciones ::  [(Feature, Etiqueta)] -> (Feature, Etiqueta) -> (Int, Etiqueta)
 contarApariciones = \xs x -> (contarRepeticiones (map snd xs) (snd x), snd x)
@@ -123,37 +123,25 @@ contarApariciones = \xs x -> (contarRepeticiones (map snd xs) (snd x), snd x)
 separarDatos :: Datos -> [Etiqueta] -> Int -> Int -> (Datos, Datos, [Etiqueta], [Etiqueta])
 separarDatos = \xs y n p ->
               let todoSeparado = separar xs y n
-                  datosEntrenamiento = concat $ deleteAt p $ fst todoSeparado
-                  datosValidacion = fst todoSeparado !! p
-                  etiquetasEntrenamiento = concat $ deleteAt p $ snd todoSeparado
-                  etiquetasValidacion = snd todoSeparado !! p
-              in (datosEntrenamiento, datosValidacion, etiquetasEntrenamiento, etiquetasValidacion)
-      -- let t = (length xs) `div` n
-      --     finPrimera    = (p - 1) * t
-      --     finValidacion = p * t
-      --     finSegunda    = n * t
-      -- in        (sublista 1 finPrimera xs ++ sublista (finValidacion+1) finSegunda xs,
-      --            sublista (finPrimera+1) finValidacion xs,
-      --            sublista 1 finPrimera y ++ sublista (finValidacion+1) finSegunda y,
-      --            sublista (finPrimera+1) finValidacion y)
+              in tuplar todoSeparado p
 
+deleteAt :: Int -> [a] -> [a]
 deleteAt p xs = take (p - 1) xs ++ drop p xs
 
 tuplar :: ([Datos], [[Etiqueta]]) -> Int -> (Datos, Datos, [Etiqueta], [Etiqueta])
-tuplar todoSeparado p = let datosEntrenamiento = concat $ deleteAt p $ fst todoSeparado
-                            datosValidacion = fst todoSeparado !! p
+tuplar todoSeparado p = let datosValidacion = fst todoSeparado !! (p - 1)
+                            datosEntrenamiento = concat $ deleteAt p $ fst todoSeparado
+                            etiquetasValidacion = snd todoSeparado !! (p - 1)
                             etiquetasEntrenamiento = concat $ deleteAt p $ snd todoSeparado
-                            etiquetasValidacion = snd todoSeparado !! p
                         in (datosEntrenamiento, datosValidacion, etiquetasEntrenamiento, etiquetasValidacion)
 
 separar :: Datos -> [Etiqueta] -> Int -> ([Datos], [[Etiqueta]])
-separar ds es n = (splitEvery n ds, splitEvery n es)
+separar ds es n = let t = (length ds) `div` n
+                      filtrarSiSobra = \xs -> if length ds `mod` n /= 0 then init xs else xs
+                  in (filtrarSiSobra $ splitEvery t ds, filtrarSiSobra $ splitEvery t es)
 
 splitEvery :: Int -> [a] -> [[a]]
 splitEvery n = takeWhile (not . null) . unfoldr (Just . splitAt n)
-
--- sublista :: Int -> Int -> [a] -> [a]
--- sublista comienzo fin xs = drop (comienzo-1) $ take fin xs
 
 -- Ejercicio 11 --
 
@@ -167,8 +155,9 @@ nFoldCrossValidation :: Int -> Datos -> [Etiqueta] -> Float
 nFoldCrossValidation = \n datos etiquetas ->
         let ps = [1 .. n]
             datosSeparados = separar datos etiquetas n
-            -- separar p = separarDatos datos etiquetas n p
-            separar2 p = tuplar datosSeparados p
+            -- generarTupla p = separarDatos datos etiquetas n p
+            generarTupla p = tuplar datosSeparados p
+            calcularAccuracy = \tupla -> accuracy (fst tupla) (snd tupla)
             aplicarModelo = \tupla ->
               let datosEntrenamiento = datosEnt tupla
                   etiquetaEntrenamiento = etiEnt tupla
@@ -176,11 +165,12 @@ nFoldCrossValidation = \n datos etiquetas ->
                   etiquetaValidacion = etiVal tupla
                   modelo = knn 15 datosEntrenamiento etiquetaEntrenamiento distEuclideana
               in (etiquetaValidacion, map modelo datosValidacion)
-            calcularAcurracy = \tupla -> accuracy (fst tupla) (snd tupla)
-        in mean $ map (calcularAcurracy . aplicarModelo . separar2) ps
-
+        in mean $ map (calcularAccuracy . aplicarModelo . generarTupla) ps
 
 datosEnt (x, _, _, _) = x
 datosVal (_, x, _, _) = x
 etiEnt (_, _, x, _) = x
 etiVal (_, _, _, x) = x
+
+
+-- aplicarModelo = \tupla -> (etiVal tupla, map (knn 15 (datosEnt tupla) (etiEnt tupla) distEuclideana) (datosVal tupla))

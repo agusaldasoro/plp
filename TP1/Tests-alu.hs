@@ -13,17 +13,33 @@ main = runTestTT allTests
 allTests = test [
  	"split" ~: testsSplit,
   "longPromedioPalabras" ~: testsLongitudPromedioPalabras,
- 	"cuentas" ~: testsCuentas,
   "frecuenciaTokens" ~: testsFrecuenciaTokens,
   "distEuclediana" ~: testsDistEuclediana,
   "distCoseno" ~: testsDistCoseno,
   "acurracy" ~: testsAcurracy,
+  "normalizarExtractor" ~: testsNormalizarExtractor,
+  "knn" ~: testsknn,
+  "repeticionesPromedio" ~: testsRepeticionesPromedio,
+  "extraerFeatures" ~: testsExtraerFeatures,
+  "cuentas" ~: testsCuentas,
+  "extraerSepararDatos" ~: testsSepararDatos,
   "nFoldCrossValidation" ~: testsNFoldCrossValidation
   ]
 
+testsNFoldCrossValidation = test [
+  nFoldCrossValidation 3 [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7]] ["1","2","3","4","5","6","7"] ~?= 0.8333333,
+  nFoldCrossValidation 4 [[x,x] | x <- [1 .. 100000]] ["i" | x <- [1 .. 100000]] ~?= 1
+  ]
+
 testsSplit = test [
- 	split ',' ",PLP," ~?= ["PLP"],
- 	split ',' " ,PLP, " ~?= [" ","PLP"," "]
+  split ',' ",PLP," ~?= ["PLP"],
+  split ',' " ,PLP, " ~?= [" ","PLP"," "],
+  split ',' "hola PLP, bienvenidos!" ~?= ["hola PLP"," bienvenidos!"],
+  split ' ' "" ~?= [],
+  split 84 [] ~?= [],
+  split ['a'] [[]] ~?= [[""]],
+  split 'a' "Estaba la PAloma BlanCA" ~?= ["Est","b"," l"," PAlom"," Bl","nCA"],
+  split 'a' [if x `mod` 2 == 0 then ' ' else 'a' | x <- [1 .. 100000]] ~?= [" " | x <- [1 .. 50000]]
   ]
 
 testsLongitudPromedioPalabras = test [
@@ -33,10 +49,6 @@ testsLongitudPromedioPalabras = test [
   longitudPromedioPalabras "3 tristes tigres" ~?= 4.6666665,
   longitudPromedioPalabras "Mi mama me mima" ~?= 3,
   longitudPromedioPalabras [if x `mod` 2 == 0 then ' ' else 'a' | x <- [1 .. mucho]] ~?= 1
-  ]
-
-testsCuentas = test [
-	cuentas ["x","x","y","x","z"] ~?= [(3,"x"), (1,"y"), (1,"z")]
   ]
 
 testsFrecuenciaTokens = test [
@@ -67,12 +79,49 @@ testsAcurracy = test [
   accuracy (replicate mucho "f") [if x `mod` 2 == 0 then "f" else "i" | x <- [1 .. mucho]] ~?= 0.5
   ]
 
-testsNFoldCrossValidation = test [
-  nFoldCrossValidation 3 [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7]] ["1","2","3","4","5","6","7"] ~?= 0.8333333,
-  nFoldCrossValidation 4 [[x,x] | x <- [1 .. 100000]] ["i" | x <- [1 .. 100000]] ~?= 1
+testsCuentas = test [
+	cuentas ["x","x","y","x","z"] ~?= [(3,"x"), (1,"y"), (1,"z")],
+	cuentas [""] ~?= [(1,"")],
+	cuentas ["e","3", "6", "3"] ~?= [(1,"e"), (2, "3"), (1,"6")],
+	cuentas ([] :: [Int]) ~?= [],
+	cuentas [if 1 == mod a 2 then "a" else "b"| a <- [1..100000]] ~?= [(50000, "a"), (50000, "b")]
+
+	]
+
+testsNormalizarExtractor = test [
+ 	normalizarExtractor ["usando haskell la vida es hermosa", "shalalala", "el que lee este test no entiende nada", "a a a a"] repeticionesPromedio "a a a a" ~?= 1.0,
+ 	normalizarExtractor ["usando haskell la vida es hermosa","e e", "shalalala", "el que lee este test no entiende nada", "a a a a"] repeticionesPromedio "shalalala" ~?= 0.25,
+ 	normalizarExtractor ["usando haskell la vida es hermosa","e e", "shalalala", "el que lee este test no entiende nada", "a a a a"] repeticionesPromedio "e e" ~?= 0.5
+ 	]
+
+testsknn = test [
+	(knn 2 [[0,1],[0,2],[2,1],[1,1],[2,3]] ["i","i","f","f","i"] distEuclideana) [1,1] ~?= "f",
+	(knn 4 [[0,1],[0,2],[2,1],[1,1],[2,3]] ["i","i","f","f","i"] distEuclideana) [1,1] ~?= "i",
+	(knn 120 [[a, a*32 ]| a <- [1..10000]] [if mod a 3 == 0 then "i" else "f" | a <- [1..10000]] distEuclideana) [1,63] ~?= "f",
+	(knn 300 [[a, a*32 ]| a <- [1..10000]] [if mod a 3 == 0 then "i" else "f" | a <- [1..10000]] distEuclideana) [1,63] ~?= "f",
+	(knn 500 [[a, a*32 ]| a <- [1..100000]] [if mod a 6 == 0 then "i" else "f" | a <- [1..10000]] distEuclideana) [9000,63] ~?= "f"
+	]
+
+testsRepeticionesPromedio = test [
+  repeticionesPromedio "lalala $$++$$ lalala lalala $$++$$" ~?= 2.5,
+  repeticionesPromedio "a b c d" ~?= 1,
+  repeticionesPromedio "aba aba aba aca" ~?= 2,
+  repeticionesPromedio [if x `mod` 2 == 0 then ' ' else 'a' | x <- [1 .. 100000]] ~?= 50000
   ]
 
--- Auxiliares --
+testsExtraerFeatures = test [
+  extraerFeatures [longitudPromedioPalabras, repeticionesPromedio] ["b=a", "a = 2; a = 4", "C:/DOS C:/DOS/RUN RUN/DOS/RUN"] ~?= [[0.33333334,0.6666667],[0.12962963,1.0],[1.0,0.6666667]],
+  extraerFeatures [] ["a"] ~?= [[]],
+  extraerFeatures [longitudPromedioPalabras] [] ~?= [],
+  extraerFeatures [repeticionesPromedio, repeticionesPromedio] [[if x `mod` 2 == 0 then ' ' else 'a' | x <- [1 .. 100000]], [if x `mod` 2 == 0 then ' ' else 'a' | x <- [1 .. 100000]]] ~?= [[1.0,1.0],[1.0,1.0]]
+  ]
+
+testsSepararDatos = test [
+  separarDatos [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7]] ["1","2","3","4","5","6","7"] 3 2 ~?= ([[1.0,1.0],[2.0,2.0],[5.0,5.0],[6.0,6.0]],[[3.0,3.0],[4.0,4.0]],["1","2","5","6"],["3","4"]),
+  separarDatos [[x,x] | x <- [1 .. 100003]] ["x" | x <- [1 .. 100003]] 4 2 ~?= ([[x,x] | x <- [1 .. 25000]] ++ [[x,x] | x <- [50001 .. 100000]], [[x,x] | x <- [25001 .. 50000]], ["x" | x <- [1 .. 25000]] ++ ["x" | x <- [50001 .. 100000]], ["x" | x <- [25001 .. 50000]])
+  ]
+
+  -- Auxiliares --
 
 buscarExtractor = \tok ->
         let posToken = (\(Just i) -> i) (elemIndex tok tokens)
