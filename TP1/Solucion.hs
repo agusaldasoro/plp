@@ -19,51 +19,78 @@ tryClassifier x y = let xs = extraerFeatures ([longitudPromedioPalabras, repetic
 mean :: [Float] -> Float
 mean xs = realToFrac (sum xs) / genericLength xs
 
+-----------------
 -- Ejercicio 1 --
+-----------------
 
+--delim es el elemento separador, xs la lista a aplicar el split.
 split :: Eq a => a -> [a] -> [[a]]
 split = \delim xs -> sinVacios $ foldr (f delim) [[]] xs
+--Primero se aplica f con delim que lo que hace es partir en listas separando por el delimitador.
+--Y luego se retiran las listas en blanco con sinVacios
         where sinVacios = filter (not . null)
               f delim actual (x:xs) =
                 if delim == actual then [] : (x : xs) else (actual : x) : xs
 
-
+-----------------
 -- Ejercicio 2 --
+-----------------
 
+--A cada palabra se le pide su tamanio, y luego se hace un promedio de ellos.
 longitudPromedioPalabras :: Extractor
 longitudPromedioPalabras = \texto -> mean $ map genericLength $ palabras texto
 
+--Se divide spliteando las palabras por el caracter espacio.
 palabras :: Texto -> [Texto]
 palabras = split ' '
 
+-----------------
 -- Ejercicio 3 --
+-----------------
 
+--Devuelve la cantidad de apariciones por cada elemento de la lista.
 cuentas :: Eq a => [a] -> [(Int, a)]
 cuentas = \xs ->
+--Primero se obtiene la lista sin repetidos de xs,
+--y luego por cada uno de estos elementos se pregunta cuantas veces aparece en la lista xs original.
         let repeticiones = map (contarRepeticiones xs) sinRepetidos
             sinRepetidos = sacarRepetidos xs
         in zip repeticiones sinRepetidos
 
+--Saca los elementos repetidos de una lista.
 sacarRepetidos :: Eq a => [a] -> [a]
 sacarRepetidos xs = foldl f [] xs
+--Si el elemento no aparece en la lista, lo agrega. Sino, no.
         where f rec x = if x `elem` rec then rec else rec ++ [x]
 
+--Cuenta la cantidad de veces que aparece el elemento en la lista
 contarRepeticiones :: Eq a => [a] -> a -> Int
 contarRepeticiones lista elemento = foldr (+) 0 $ map (beta . (==elemento)) lista
+--A cada elemento de la lista se le pregunta si es igual, y luego se "suman los true".
         where beta = \x -> if x then 1 else 0
 
+-----------------
 -- Ejercicio 4 --
+-----------------
 
+--Se calcula el promedio de apariciones en la lista de cada palabra (separada por espacios).
 repeticionesPromedio :: Extractor
 repeticionesPromedio = \xs -> mean $ map (fromIntegral . fst) $ cuentas $ palabras xs
 
+-----------------
 -- Ejercicio 5 --
+-----------------
 
+--Devuelve cual es la frecuencia relativa de cada token de la lista.
 frecuenciaTokens :: [Extractor]
 frecuenciaTokens = map frecuenciaRelativa tokens
 
+--Dados un token y un texto, devuelve las repeticiones de dicho token dividido el tamanio del texto.
 frecuenciaRelativa :: Char -> Extractor
 frecuenciaRelativa = \token texto ->
+--total es el tamanio del texto.
+--repeticionesDelToken es la cantidad de veces que aparece dicho token en el texto.
+--aparicionesDelToken salva el caso donde el token no aparece y repeticionesDelToken es la lista vacia.
         let total = (fromIntegral . length) texto
             repeticionesDelToken = filter (\tupla -> (snd tupla) == token) $ cuentas texto
             extraerToken = if not . null $ repeticionesDelToken then head repeticionesDelToken else (0 , token)
@@ -73,26 +100,38 @@ frecuenciaRelativa = \token texto ->
 tokens :: [Char]
 tokens = "_,)(*;-=>/.{}\"&:+#[]<|%!\'@?~^$` abcdefghijklmnopqrstuvwxyz0123456789"
 
+-----------------
 -- Ejercicio 6 --
+-----------------
 
+--Toma por cada valor obtenido del extractor su valor absoluto,
+--para luego dividirlo por el maximo del texto y asi tener el vector normalizado.
 normalizarExtractor :: [Texto] -> Extractor -> Extractor
 normalizarExtractor = \textos ext texto ->
         let maximo = maximum $ map (abs . ext) textos
         in (ext texto) / maximo
 
+-----------------
 -- Ejercicio 7 --
+-----------------
 
+--Primero se normalizan los extractores pasados como parametro.
+--Luego, se calculan para todo el texto.
 extraerFeatures :: [Extractor] -> [Texto] -> Datos
 extraerFeatures = \es textos ->
         let extractoresNormalizados = map (normalizarExtractor textos) es
             extraer = \texto -> map ($ texto) extractoresNormalizados
         in map extraer textos
 
+-----------------
 -- Ejercicio 8 --
+-----------------
 
+--Es la raiz de la sumatoria de los cuadrados de la resta coordenada a coordenada.
 distEuclideana :: Medida
 distEuclideana = \xs ys -> sqrt $ sum $ map (\tupla -> ((fst tupla) - (snd tupla))^2) $ zip xs ys
 
+--Producto Escalar entre los dos vectores, dividido por la multiplicacion de sus normas.
 distCoseno :: Medida
 distCoseno = \xs ys -> (productoEscalar xs ys) / ((normaVectorial xs) * (normaVectorial ys))
 
@@ -102,20 +141,29 @@ productoEscalar xs ys = sum $ map (\tupla -> (fst tupla)*(snd tupla)) $ zip xs y
 normaVectorial :: Instancia -> Float
 normaVectorial xs = sqrt $ productoEscalar xs xs
 
+-----------------
 -- Ejercicio 9 --
+-----------------
 
+--Toma a la etiqueta con mayor cantidad de apariciones en los k mas cercanos a la instanciaAEtiquetar.
 knn :: Int -> Datos -> [Etiqueta] -> Medida -> Modelo
 knn = \k datos etiquetas medida instanciaAEtiquetar ->
+--Calcula todas las distancias desde la instanciaAEtiquetar a etiquetar con los datos.
+--Luego, toma al de mayor cantidad de apariciones entre los k mas cercanos.
         let distancias = calcularDistancias medida datos instanciaAEtiquetar
         in (masApariciones . (take k) . sort) $ zip distancias etiquetas
 
+--Dada una instancia, se calculan todas las distancias hacia los demas datos.
 calcularDistancias :: Medida -> Datos -> Instancia -> Instancia
 calcularDistancias = \medida datos instancia -> map (medida instancia) datos
 
+--Devuelve la etiqueta que tenga mas apariciones en la lista.
 masApariciones :: [(Feature, Etiqueta)] -> Etiqueta
 masApariciones = \xs -> snd $ maximum $ cuentas $ map snd xs
 
+------------------
 -- Ejercicio 10 --
+------------------
 
 separarDatos :: Datos -> [Etiqueta] -> Int -> Int -> (Datos, Datos, [Etiqueta], [Etiqueta])
 separarDatos = \xs y n p ->
@@ -140,13 +188,17 @@ separar ds es n = let t = (length ds) `div` n
 splitEvery :: Int -> [a] -> [[a]]
 splitEvery n = takeWhile (not . null) . unfoldr (Just . splitAt n)
 
+------------------
 -- Ejercicio 11 --
+------------------
 
 accuracy :: [Etiqueta] -> [Etiqueta] -> Float
 accuracy = \xs ys -> mean $ map (beta . \tupla -> snd tupla == fst tupla) $ zip xs ys
         where beta = \x -> if x then 1 else 0
 
+------------------
 -- Ejercicio 12 --
+------------------
 
 nFoldCrossValidation :: Int -> Datos -> [Etiqueta] -> Float
 nFoldCrossValidation = \n datos etiquetas ->
