@@ -39,10 +39,10 @@ palabras = split ' '
 -- Ejercicio 3 --
 
 cuentas :: Eq a => [a] -> [(Int, a)]
-cuentas = \xs -> 
+cuentas = \xs ->
         let repeticiones = map (contarRepeticiones xs) sinRepetidos
             sinRepetidos = sacarRepetidos xs
-        in zip repeticiones sinRepetidos 
+        in zip repeticiones sinRepetidos
 
 sacarRepetidos :: Eq a => [a] -> [a]
 sacarRepetidos xs = foldl f [] xs
@@ -66,7 +66,7 @@ frecuenciaRelativa :: Char -> Extractor
 frecuenciaRelativa = \token texto ->
         let total = (fromIntegral . length) texto
             repeticionesDelToken = filter (\tupla -> (snd tupla) == token) $ cuentas texto
-            extraerToken = if not . null $ repeticionesDelToken then head repeticionesDelToken else (0 , token) 
+            extraerToken = if not . null $ repeticionesDelToken then head repeticionesDelToken else (0 , token)
             aparicionesDelToken = fromIntegral $ fst $ extraerToken
         in  aparicionesDelToken / total
 
@@ -121,18 +121,39 @@ contarApariciones = \xs x -> (contarRepeticiones (map snd xs) (snd x), snd x)
 -- Ejercicio 10 --
 
 separarDatos :: Datos -> [Etiqueta] -> Int -> Int -> (Datos, Datos, [Etiqueta], [Etiqueta])
-separarDatos = \xs y n p -> 
-      let t = (length xs) `div` n
-          finPrimera    = (p - 1) * t
-          finValidacion = p * t
-          finSegunda    = n * t
-      in        (sublista 1 finPrimera xs ++ sublista (finValidacion+1) finSegunda xs,
-                 sublista (finPrimera+1) finValidacion xs,
-                 sublista 1 finPrimera y ++ sublista (finValidacion+1) finSegunda y,
-                 sublista (finPrimera+1) finValidacion y)
+separarDatos = \xs y n p ->
+              let todoSeparado = separar xs y n
+                  datosEntrenamiento = concat $ deleteAt p $ fst todoSeparado
+                  datosValidacion = fst todoSeparado !! p
+                  etiquetasEntrenamiento = concat $ deleteAt p $ snd todoSeparado
+                  etiquetasValidacion = snd todoSeparado !! p
+              in (datosEntrenamiento, datosValidacion, etiquetasEntrenamiento, etiquetasValidacion)
+      -- let t = (length xs) `div` n
+      --     finPrimera    = (p - 1) * t
+      --     finValidacion = p * t
+      --     finSegunda    = n * t
+      -- in        (sublista 1 finPrimera xs ++ sublista (finValidacion+1) finSegunda xs,
+      --            sublista (finPrimera+1) finValidacion xs,
+      --            sublista 1 finPrimera y ++ sublista (finValidacion+1) finSegunda y,
+      --            sublista (finPrimera+1) finValidacion y)
 
-sublista :: Int -> Int -> [a] -> [a]
-sublista comienzo fin xs = drop (comienzo-1) $ take fin xs
+deleteAt p xs = take (p - 1) xs ++ drop p xs
+
+tuplar :: ([Datos], [[Etiqueta]]) -> Int -> (Datos, Datos, [Etiqueta], [Etiqueta])
+tuplar todoSeparado p = let datosEntrenamiento = concat $ deleteAt p $ fst todoSeparado
+                            datosValidacion = fst todoSeparado !! p
+                            etiquetasEntrenamiento = concat $ deleteAt p $ snd todoSeparado
+                            etiquetasValidacion = snd todoSeparado !! p
+                        in (datosEntrenamiento, datosValidacion, etiquetasEntrenamiento, etiquetasValidacion)
+
+separar :: Datos -> [Etiqueta] -> Int -> ([Datos], [[Etiqueta]])
+separar ds es n = (splitEvery n ds, splitEvery n es)
+
+splitEvery :: Int -> [a] -> [[a]]
+splitEvery n = takeWhile (not . null) . unfoldr (Just . splitAt n)
+
+-- sublista :: Int -> Int -> [a] -> [a]
+-- sublista comienzo fin xs = drop (comienzo-1) $ take fin xs
 
 -- Ejercicio 11 --
 
@@ -145,11 +166,18 @@ accuracy = \xs ys -> mean $ map (beta . \tupla -> snd tupla == fst tupla) $ zip 
 nFoldCrossValidation :: Int -> Datos -> [Etiqueta] -> Float
 nFoldCrossValidation = \n datos etiquetas ->
         let ps = [1 .. n]
-            separar p = separarDatos datos etiquetas n p
-            obtenerModelo = \tupla -> knn 15 (datosEnt tupla) (etiEnt tupla) distEuclideana
-            aplicarModelo = \tupla -> (etiVal tupla, map (obtenerModelo tupla) (datosVal tupla))
+            datosSeparados = separar datos etiquetas n
+            -- separar p = separarDatos datos etiquetas n p
+            separar2 p = tuplar datosSeparados p
+            aplicarModelo = \tupla ->
+              let datosEntrenamiento = datosEnt tupla
+                  etiquetaEntrenamiento = etiEnt tupla
+                  datosValidacion = datosVal tupla
+                  etiquetaValidacion = etiVal tupla
+                  modelo = knn 15 datosEntrenamiento etiquetaEntrenamiento distEuclideana
+              in (etiquetaValidacion, map modelo datosValidacion)
             calcularAcurracy = \tupla -> accuracy (fst tupla) (snd tupla)
-        in mean $ map (calcularAcurracy . aplicarModelo . separar) ps
+        in mean $ map (calcularAcurracy . aplicarModelo . separar2) ps
 
 
 datosEnt (x, _, _, _) = x

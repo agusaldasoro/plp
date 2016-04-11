@@ -17,7 +17,8 @@ allTests = test [
   "frecuenciaTokens" ~: testsFrecuenciaTokens,
   "distEuclediana" ~: testsDistEuclediana,
   "distCoseno" ~: testsDistCoseno,
-  "acurracy" ~: testsAcurracy
+  "acurracy" ~: testsAcurracy,
+  "nFoldCrossValidation" ~: testsNFoldCrossValidation
   ]
 
 testsSplit = test [
@@ -65,6 +66,13 @@ testsAcurracy = test [
   accuracy ["f", "f", "i", "i", "f"] ["f", "f", "i", "i", "f"] ~?= 1.0,
   accuracy (replicate mucho "f") [if x `mod` 2 == 0 then "f" else "i" | x <- [1 .. mucho]] ~?= 0.5
   ]
+
+testsNFoldCrossValidation = test [
+  nFoldCrossValidation 3 [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7]] ["1","2","3","4","5","6","7"] ~?= 0.8333333,
+  nFoldCrossValidation 4 [[x,x] | x <- [1 .. 100000]] ["i" | x <- [1 .. 100000]] ~?= 1
+  ]
+
+-- Auxiliares --
 
 buscarExtractor = \tok ->
         let posToken = (\(Just i) -> i) (elemIndex tok tokens)
