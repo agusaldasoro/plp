@@ -27,7 +27,9 @@ allTests = test [
   ]
 
 testsNFoldCrossValidation = test [
-  nFoldCrossValidation 3 [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7]] ["1","2","3","4","5","6","7"] ~?= 0.8333333,
+  nFoldCrossValidation 3 [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6]] ["i","f","f","i","f","f"],
+  nFoldCrossValidation 2 [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6]] ["f","f","i","f","f","i"],
+  nFoldCrossValidation 2 [[1,1],[2,8],[3,3],[4,3],[5,4],[1,6]] ["f","f","i","f","f","i"],
   nFoldCrossValidation 4 [[x,x] | x <- [1 .. 10000]] ["i" | x <- [1 .. 10000]] ~?= 1
   ]
 
