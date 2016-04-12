@@ -28,7 +28,7 @@ allTests = test [
 
 testsNFoldCrossValidation = test [
   nFoldCrossValidation 3 [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7]] ["1","2","3","4","5","6","7"] ~?= 0.8333333,
-  nFoldCrossValidation 4 [[x,x] | x <- [1 .. 100000]] ["i" | x <- [1 .. 100000]] ~?= 1
+  nFoldCrossValidation 4 [[x,x] | x <- [1 .. 10000]] ["i" | x <- [1 .. 10000]] ~?= 1
   ]
 
 testsSplit = test [
@@ -95,7 +95,7 @@ testsNormalizarExtractor = test [
  	]
 
 testsknn = test [
-	(knn 2 [[0,1],[0,2],[2,1],[1,1],[2,3]] ["i","i","f","f","i"] distEuclideana) [1,1] ~?= "f",
+	(knn 2 [[0,1],[0,2],[2,1],[2,1],[2,3]] ["i","i","f","f","i"] distEuclideana) [0,1] ~?= "i",
 	(knn 4 [[0,1],[0,2],[2,1],[1,1],[2,3]] ["i","i","f","f","i"] distEuclideana) [1,1] ~?= "i",
 	(knn 120 [[a, a*32 ]| a <- [1..10000]] [if mod a 3 == 0 then "i" else "f" | a <- [1..10000]] distEuclideana) [1,63] ~?= "f",
 	(knn 300 [[a, a*32 ]| a <- [1..10000]] [if mod a 3 == 0 then "i" else "f" | a <- [1..10000]] distEuclideana) [1,63] ~?= "f",
