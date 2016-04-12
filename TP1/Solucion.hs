@@ -83,7 +83,8 @@ tokens = "_,)(*;-=>/.{}\"&:+#[]<|%!\'@?~^$` abcdefghijklmnopqrstuvwxyz0123456789
 --para luego dividirlo por el maximo del texto y asi tener el vector normalizado.
 normalizarExtractor :: [Texto] -> Extractor -> Extractor
 normalizarExtractor = \textos ext ->
-        let valorAbsMax = (abs . ext) (maximumBy (comparing (abs . ext)) textos)
+        let extraerAbs =  (abs . ext)
+            valorAbsMax = extraerAbs $ maximumBy (comparing extraerAbs) textos
         in (/valorAbsMax) . ext
 
 -----------------
@@ -94,8 +95,8 @@ normalizarExtractor = \textos ext ->
 --Luego, se calculan para todo el texto.
 extraerFeatures :: [Extractor] -> [Texto] -> Datos
 extraerFeatures = \es textos ->
-        let normalizar = normalizarExtractor textos
-        in map (\texto -> map (\extractor -> normalizar extractor texto) es) textos
+        let extractoresNormalizados = map (normalizarExtractor textos) es
+        in map (\texto -> map (\extractor -> extractor texto) extractoresNormalizados) textos
 
 -----------------
 -- Ejercicio 8 --
