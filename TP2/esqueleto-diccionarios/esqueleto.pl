@@ -70,12 +70,20 @@ asignar_variables([P | PS], MI) :- asignar_var(P, MI, MF), asignar_variables(PS,
 
 % Ejercicio 6 %
 quitar(_, [], []).
-quitar(E, [E | LS], R) :- quitar(E, LS, R).
-quitar(E, [L | LS], R) :- L \= E, quitar(E, LS, [L | R]).
+quitar(E, [Y | LS], R) :- Y == E, quitar(E, LS, R).
+quitar(E, [L | LS], [L | R]) :- L \== E, quitar(E, LS, R).
 
 % Ejercicio 7 %
 cant_distintos([], 0).
-cant_distintos([X | XS], N) :- quitar(X, XS, Y), cant_distintos(Y, P), N == P + 1.
+cant_distintos([X | XS], N) :- quitar(X, XS, Y), cant_distintos(Y, P), N is P + 1.
 
 % Ejercicio 8 %
-descifar(S, M) :- 
+descifrar(S, M) :- palabras(S, P), palabras_con_variables(P, V), encontrar_codigos(V), pasar_a_string(V, M).
+
+encontrar_codigos([]).
+encontrar_codigos([V | VS]) :- diccionario_lista(V), encontrar_codigos(VS).
+
+pasar_a_string(X, Y) :- juntar_con(X, 32, Z), string_codes(Y, Z).
+
+% Ejercicio 9 %
+descifrar_sin_espacios(S, M).
