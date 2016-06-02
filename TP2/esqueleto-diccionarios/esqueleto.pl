@@ -86,11 +86,28 @@ encontrar_codigos([V | VS]) :- diccionario_lista(V), encontrar_codigos(VS).
 pasar_a_string(X, Y) :- juntar_con(X, 32, Z), string_codes(Y, Z).
 
 % Ejercicio 9 %
-descifrar_sin_espacios(S, M) :- length(S, I), quitar(espacio, R, S), apariciones(espacio, R, C), C =< I, descifrar(S, M).
+descifrar_sin_espacios(S, M) :- generarListasDeAgus(S, Y), descifrar(Y, M).
 
-apariciones(_, [], 0).
-apariciones(E, [L | LS], N) :- E == L, apariciones(E, LS, M), N is M + 1.
-apariciones(E, [L | LS], N) :- E \== L, apariciones(E, LS, N).
+generarListasDeAgus(S, M) :- length(S, Y), generar(M, Y), son_similares(S, M).
+
+son_similares(S, M) :- quitar2(espacio, M, S), sin_espacios_seguidos(M).
+
+sin_espacios_seguidos([]).
+sin_espacios_seguidos([_]).
+sin_espacios_seguidos([espacio | [Y | X]]) :- Y \= espacio, sin_espacios_seguidos(X).
+sin_espacios_seguidos([L | [Y | X]]) :- not(L = espacio), sin_espacios_seguidos([Y | X]).
+
+generar(X, N) :- H is N * 2, between(N, H, Y), generarLista(X, Y).
+generarLista(X, Y) :- length(X, Y).
+
+
+quitar2(_, [], []).
+quitar2(E, [Y | LS], R) :- Y == E, quitar2(E, LS, R).
+quitar2(E, [L | LS], [L | R]) :- L \== E, quitar2(E, LS, R).
+%
+% apariciones(_, [], 0).
+% apariciones(E, [L | LS], N) :- E == L, apariciones(E, LS, M), N is M + 1.
+% apariciones(E, [L | LS], N) :- E \== L, apariciones(E, LS, N).
 
 
 % Ejercicio 10 %
