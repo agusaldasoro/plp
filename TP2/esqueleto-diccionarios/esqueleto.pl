@@ -86,4 +86,12 @@ encontrar_codigos([V | VS]) :- diccionario_lista(V), encontrar_codigos(VS).
 pasar_a_string(X, Y) :- juntar_con(X, 32, Z), string_codes(Y, Z).
 
 % Ejercicio 9 %
-descifrar_sin_espacios(S, M).
+descifrar_sin_espacios(S, M) :- length(S, I), quitar(espacio, R, S), apariciones(espacio, R, C), C =< I, descifrar(S, M).
+
+apariciones(_, [], 0).
+apariciones(E, [L | LS], N) :- E == L, apariciones(E, LS, M), N is M + 1.
+apariciones(E, [L | LS], N) :- E \== L, apariciones(E, LS, N).
+
+
+% Ejercicio 10 %
+mensajes_mas_parejos(_, _).
