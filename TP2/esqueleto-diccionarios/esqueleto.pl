@@ -76,12 +76,11 @@ cant_distintos([], 0).
 cant_distintos([X | XS], N) :- quitar(X, XS, Y), cant_distintos(Y, P), N is P + 1.
 
 % Ejercicio 8 % Anda mal, devuelve cosas incorrectas y repetidos.
-descifrar(S, M) :- palabras(S, P), palabras_con_variables(P, V), encontrar_codigos(V), pasar_a_string(V, M).
+descifrar(S, M) :- palabras(S, P), palabras_con_variables(P, V), encontrar_codigos(V),
+                    cant_distintos(P, N1), cant_distintos(V, N2), N1 is N2, pasar_a_string(V, M).
 
 encontrar_codigos([]).
-encontrar_codigos([V | VS]) :- encontrar_codigos(VS), flatten(VS, VSS), diccionario_lista(V), disjuntos(V, VSS).
-
-disjuntos(XS, YS) :- cant_distintos(XS, N1), cant_distintos(YS, N2), append(XS, YS, ZS), cant_distintos(ZS, N3), N3 is N1 + N2.
+encontrar_codigos([V | VS]) :- encontrar_codigos(VS), diccionario_lista(V).
 
 pasar_a_string(X, Y) :- juntar_con(X, 32, Z), string_codes(Y, Z).
 
