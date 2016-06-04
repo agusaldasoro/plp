@@ -41,7 +41,7 @@ diccionario_lista(C) :- diccionario(X), string_codes(X, C).
 % Si aparece J dos veces seguidas en R, es xq hubo una lista vacía en el medio.
 juntar_con([], _, []).
 juntar_con([X], C, X) :- not(member(C, X)).
-juntar_con([H | [L | LS]], C, R) :- append(H, [C], Y), append(Y, P, R), juntar_con([L | LS], C, P).
+juntar_con([H | [L | LS]], C, R) :- append(H, [C], Y), append(Y, P, R), juntar_con([L | LS], C, P), !.
 
 % Ejercicio 3 % Se cuelga con ; (coincide PDF)
 palabras(S, P) :- juntar_con(P, espacio, S).
@@ -54,11 +54,11 @@ asignar_var(A, MI, MF) :- not(esta_mapeada(A, MI)), append(MI, [(A, _)], MF).
 
 esta_mapeada(A, MI) :- member((A, _), MI).
 
-% Ejercicio 5 % Devuelve infinitas soluciones iguales
-palabras_con_variables(P, V) :- flatten(P, Y), asignar_variables(Y, MF), dividir(P, MF, V).
+% Ejercicio 5 % CHAMO: creo que está bien poner el ! acá, porque como devolvemos variables, siempre hay infinitas soluciones.
+palabras_con_variables(P, V) :- flatten(P, Y), asignar_variables(Y, MF), dividir(P, MF, V), !.
 
 dividir([], _, []).
-dividir([P | PS], MF, [V | VS]) :- dividir(PS, MF, VS), cambiar_a_variables(P, MF, V).
+dividir([P | PS], MF, [V | VS]) :- cambiar_a_variables(P, MF, V), dividir(PS, MF, VS).
 
 cambiar_a_variables([], _, []).
 cambiar_a_variables([A | AS], MF, [V | VS]) :- member((A, V), MF), cambiar_a_variables(AS, MF, VS).
@@ -79,7 +79,9 @@ cant_distintos([X | XS], N) :- quitar(X, XS, Y), cant_distintos(Y, P), N is P + 
 descifrar(S, M) :- palabras(S, P), palabras_con_variables(P, V), encontrar_codigos(V), pasar_a_string(V, M).
 
 encontrar_codigos([]).
-encontrar_codigos([V | VS]) :- diccionario_lista(V), encontrar_codigos(VS).
+encontrar_codigos([V | VS]) :- encontrar_codigos(VS), flatten(VS, VSS), diccionario_lista(V), disjuntos(V, VSS).
+
+disjuntos(XS, YS) :- cant_distintos(XS, N1), cant_distintos(YS, N2), append(XS, YS, ZS), cant_distintos(ZS, N3), N3 is N1 + N2.
 
 pasar_a_string(X, Y) :- juntar_con(X, 32, Z), string_codes(Y, Z).
 
