@@ -44,7 +44,7 @@ juntar_con([X], C, X) :- not(member(C, X)).
 juntar_con([H | [L | LS]], C, R) :- append(H, [C], Y), append(Y, P, R), juntar_con([L | LS], C, P), !.
 
 % Ejercicio 3 % Se cuelga con ; (coincide PDF)
-palabras(S, P) :- juntar_con(P, espacio, S).
+palabras(S, P) :- juntar_con(P, espacio, S), !.
 
 % Ejercicio 4 % No siempre devuelve false al apretar ; a veces corta ejecucion sin error.
 % asignar_var(?A, ?MI, ?MF)
