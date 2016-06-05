@@ -96,13 +96,17 @@ poner_espacios([A | AS], [espacio | [A | BS]]) :- poner_espacios(AS, BS).
 poner_espacios([A | AS], [A | BS]) :- poner_espacios(AS, BS).
 
 % Ejercicio 10 %
-mensajes_mas_parejos(S, M):- descifrar_sin_espacios(S,M), descifrar_sin_espacios(S,N), desvio_standard(M,A), desvio_standard(N,B), M \= N,  A =< B.
+mensajes_mas_parejos(S, M):- descifrar_sin_espacios(S, M), es_minimo(S, M).
 
-desvio_standard(M,P) :- string_codes(M, C), juntar_con(L,32, C), tamanio_promedio(L, N), distancia_al_promedio(L, N, Q), length(L, R), P = sqrt(Q/R). 
+es_minimo(S, M) :- not(existe_menor(S, M)).
+
+existe_menor(S, M) :- descifrar_sin_espacios(S, N), desvio_standard(M, A), desvio_standard(N, B), A > B.
+
+desvio_standard(M,P) :- string_codes(M, C), juntar_con(L,32, C), tamanio_promedio(L, N), distancia_al_promedio(L, N, Q), length(L, R), P = sqrt(Q/R).
 
 distancia_al_promedio([], _, 0).
 distancia_al_promedio([L | LS] , N, P) :- length(L, M), distancia_al_promedio(LS, N, O), P is O + (M- N) * (M - N).
- 
+
 tamanio_promedio([], 0).
 tamanio_promedio(L, P) :- suma_tamanos(L,O), length(L, N), P is O/N.
 
