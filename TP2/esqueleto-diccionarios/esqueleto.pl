@@ -31,10 +31,10 @@ ej(3, [rombo, cuadrado, perro, cuadrado, sol, luna, triangulo, estrella, arbol, 
 
 
 
-% Ejercicio 1 % Resultado OK
+% Ejercicio 1 %
 diccionario_lista(C) :- diccionario(X), string_codes(X, C).
 
-% Ejercicio 2 % Resultado OK
+% Ejercicio 2 %
 % juntar_con(?L, ?J, ?R), pero dos tienen que estar instanciados.
 % Asumimos que si J aparece el L, entonces es porque es el caracter de corte.
 % Es decir, no se puede ingresar una lista dentro de L que contenga a J.
@@ -43,10 +43,10 @@ juntar_con([], _, []).
 juntar_con([X], C, X) :- not(member(C, X)).
 juntar_con([H | [L | LS]], C, R) :- append(H, [C], Y), append(Y, P, R), juntar_con([L | LS], C, P), !.
 
-% Ejercicio 3 % Se cuelga con ; (coincide PDF)
+% Ejercicio 3 %
 palabras(S, P) :- juntar_con(P, espacio, S), !.
 
-% Ejercicio 4 % No siempre devuelve false al apretar ; a veces corta ejecucion sin error.
+% Ejercicio 4 %
 % asignar_var(?A, ?MI, ?MF)
 % AGREGAR XQ FUNCIONA %
 asignar_var(A, MI, MI) :- esta_mapeada(A, MI).
@@ -54,7 +54,7 @@ asignar_var(A, MI, MF) :- not(esta_mapeada(A, MI)), append(MI, [(A, _)], MF).
 
 esta_mapeada(A, MI) :- member((A, _), MI).
 
-% Ejercicio 5 % CHAMO: creo que está bien poner el ! acá, porque como devolvemos variables, siempre hay infinitas soluciones.
+% Ejercicio 5 %
 palabras_con_variables(P, V) :- flatten(P, Y), asignar_variables(Y, MF), dividir(P, MF, V), !.
 
 dividir([], _, []).
@@ -66,16 +66,16 @@ cambiar_a_variables([A | AS], MF, [V | VS]) :- member((A, V), MF), cambiar_a_var
 asignar_variables([], _).
 asignar_variables([P | PS], MI) :- asignar_var(P, MI, MF), asignar_variables(PS, MF).
 
-% Ejercicio 6 % Resultado OK
+% Ejercicio 6 %
 quitar(_, [], []).
 quitar(E, [Y | LS], R) :- Y == E, quitar(E, LS, R).
 quitar(E, [L | LS], [L | R]) :- L \== E, quitar(E, LS, R).
 
-% Ejercicio 7 % Resultado OK
+% Ejercicio 7 %
 cant_distintos([], 0).
 cant_distintos([X | XS], N) :- quitar(X, XS, Y), cant_distintos(Y, P), N is P + 1.
 
-% Ejercicio 8 % Anda mal, devuelve cosas incorrectas y repetidos.
+% Ejercicio 8 %
 descifrar(S, M) :- palabras(S, P), palabras_con_variables(P, V), encontrar_codigos(V),
                     cant_distintos(P, N1), cant_distintos(V, N2), N1 is N2, pasar_a_string(V, M).
 
@@ -84,15 +84,16 @@ encontrar_codigos([V | VS]) :- encontrar_codigos(VS), diccionario_lista(V).
 
 pasar_a_string(X, Y) :- juntar_con(X, 32, Z), string_codes(Y, Z).
 
-% Ejercicio 9 % Se cuelga, no devuelve ningun resultado.
+% Ejercicio 9 %
 descifrar_sin_espacios(A, B) :- generar_listas(A, C), descifrar(C, B).
 
 %% generar_listas es reversible. generar_listas: Resultado OK
-generar_listas([A | AS], [B | BS]) :- A = B, B \= espacio, poner_espacios(AS, BS).
+generar_listas([], []).
+generar_listas([A | AS], [A | BS]) :- poner_espacios(AS, BS).
 
 poner_espacios([], []).
-poner_espacios([A | AS], [R | [L | LS]]) :- R = espacio, A = L, L \= espacio, poner_espacios(AS, LS).
-poner_espacios([A | AS], [L | LS]) :- A = L, L \= espacio, poner_espacios(AS, LS).
+poner_espacios([A | AS], [espacio | [A | BS]]) :- poner_espacios(AS, BS).
+poner_espacios([A | AS], [A | BS]) :- poner_espacios(AS, BS).
 
 % Ejercicio 10 %
 mensajes_mas_parejos(_, _).
