@@ -53,7 +53,7 @@ palabras(S, P) :- juntar_con(P, espacio, S), !.
 
 
 % Ejercicio 4 %
-% asignar_var(+A, +MI, ?MF) por el contexto de uso especificado en el enunciado.
+% asignar_var(?A, ?MI, ?MF)
 % Si la variable ya esta mapeada, se asigna a MF el mismo diccionario MI.
 asignar_var(A, MI, MI) :- esta_mapeada(A, MI). 
 % Sino, MF es el resultado de agregar A a MI con algun valor (_). 
@@ -61,23 +61,23 @@ asignar_var(A, MI, MF) :- not(esta_mapeada(A, MI)), append(MI, [(A, _)], MF).
 
 % Para ver si esta mapeada, se pregunta si existe la tupla (A, _)
 % es decir, figura A mapeada con algun valor (_) en MI.
+%% esta_mapeada(?A, ?MI)
 esta_mapeada(A, MI) :- member((A, _), MI).
 
 
 % Ejercicio 5 %
-%% palabras_con_variables(+P, ?V)
-%% P esta instanciada por el contexto del enunciado, V solo puede estar instanciada si P lo esta.
+%% palabras_con_variables(?P, ?V)
 palabras_con_variables(P, V) :- flatten(P, Y), asignar_variables(Y, MF), dividir(P, MF, V), !.
 
-%% dividir(+PS, +MF, ?VS) estan instanciadas por su contexto de uso.
+%% dividir(?PS, ?MF, ?VS)
 dividir([], _, []).
 dividir([P | PS], MF, [V | VS]) :- cambiar_a_variables(P, MF, V), dividir(PS, MF, VS).
 
-%% cambiar_a_variables(+AS, +MF, ?VS) estan instanciadas por su contexto de uso.
+%% cambiar_a_variables(?AS, ?MF, ?VS)
 cambiar_a_variables([], _, []).
 cambiar_a_variables([A | AS], MF, [V | VS]) :- member((A, V), MF), cambiar_a_variables(AS, MF, VS).
 
-%% asignar_variables(+PS, ?MI) PS esta instanciada por el contexto del enunciado
+%% asignar_variables(?PS, ?MI)
 asignar_variables([], _).
 asignar_variables([P | PS], MI) :- asignar_var(P, MI, MF), asignar_variables(PS, MF).
 
