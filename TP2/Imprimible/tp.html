@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+<head>
+  <title></title>
+  <meta http-equiv="content-type" content="text/html; charset=None">
+  <style type="text/css">
+td.linenos { padding-right: 10px; }
+span.lineno { padding: 0 5px 0 5px; }
+pre { line-height: 125%; }
+body .c { color: #408080; font-style: italic } /* Comment */
+body .err { border: 1px solid #FF0000 } /* Error */
+body .k { color: #008000; font-weight: bold } /* Keyword */
+body .o { color: #666666 } /* Operator */
+body .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+body .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+body .cp { color: #BC7A00 } /* Comment.Preproc */
+body .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+body .c1 { color: #408080; font-style: italic } /* Comment.Single */
+body .cs { color: #408080; font-style: italic } /* Comment.Special */
+body .gd { color: #A00000 } /* Generic.Deleted */
+body .ge { font-style: italic } /* Generic.Emph */
+body .gr { color: #FF0000 } /* Generic.Error */
+body .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+body .gi { color: #00A000 } /* Generic.Inserted */
+body .go { color: #888888 } /* Generic.Output */
+body .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+body .gs { font-weight: bold } /* Generic.Strong */
+body .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+body .gt { color: #0044DD } /* Generic.Traceback */
+body .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+body .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+body .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+body .kp { color: #008000 } /* Keyword.Pseudo */
+body .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+body .kt { color: #B00040 } /* Keyword.Type */
+body .m { color: #666666 } /* Literal.Number */
+body .s { color: #BA2121 } /* Literal.String */
+body .na { color: #7D9029 } /* Name.Attribute */
+body .nb { color: #008000 } /* Name.Builtin */
+body .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+body .no { color: #880000 } /* Name.Constant */
+body .nd { color: #AA22FF } /* Name.Decorator */
+body .ni { color: #999999; font-weight: bold } /* Name.Entity */
+body .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+body .nf { color: #0000FF } /* Name.Function */
+body .nl { color: #A0A000 } /* Name.Label */
+body .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+body .nt { color: #008000; font-weight: bold } /* Name.Tag */
+body .nv { color: #19177C } /* Name.Variable */
+body .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+body .w { color: #bbbbbb } /* Text.Whitespace */
+body .mb { color: #666666 } /* Literal.Number.Bin */
+body .mf { color: #666666 } /* Literal.Number.Float */
+body .mh { color: #666666 } /* Literal.Number.Hex */
+body .mi { color: #666666 } /* Literal.Number.Integer */
+body .mo { color: #666666 } /* Literal.Number.Oct */
+body .sa { color: #BA2121 } /* Literal.String.Affix */
+body .sb { color: #BA2121 } /* Literal.String.Backtick */
+body .sc { color: #BA2121 } /* Literal.String.Char */
+body .dl { color: #BA2121 } /* Literal.String.Delimiter */
+body .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+body .s2 { color: #BA2121 } /* Literal.String.Double */
+body .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+body .sh { color: #BA2121 } /* Literal.String.Heredoc */
+body .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+body .sx { color: #008000 } /* Literal.String.Other */
+body .sr { color: #BB6688 } /* Literal.String.Regex */
+body .s1 { color: #BA2121 } /* Literal.String.Single */
+body .ss { color: #19177C } /* Literal.String.Symbol */
+body .bp { color: #008000 } /* Name.Builtin.Pseudo */
+body .fm { color: #0000FF } /* Name.Function.Magic */
+body .vc { color: #19177C } /* Name.Variable.Class */
+body .vg { color: #19177C } /* Name.Variable.Global */
+body .vi { color: #19177C } /* Name.Variable.Instance */
+body .vm { color: #19177C } /* Name.Variable.Magic */
+body .il { color: #666666 } /* Literal.Number.Integer.Long */
+
+  </style>
+</head>
+<body>
+<h2></h2>
+
+<font size="4">
+
+<div class="highlight"><pre style="line-height: 125%"><span></span>:- <span style="color: #0000FF">dynamic</span>(<span style="color: #BA2121">diccionario</span><span style="color: #666666">/1</span>).
+
+<span style="color: #408080; font-style: italic">% Dado un nombre de archivo que contiene todas las palabras que se quieren</span>
+<span style="color: #408080; font-style: italic">% agregar al diccionario (una por linea), vacia diccionario/1 y agrega</span>
+<span style="color: #408080; font-style: italic">% las definiciones nuevas</span>
+
+<span style="color: #0000FF">cargar</span>(<span style="color: #19177C">NombreDeArchivo</span>) :-
+  <span style="color: #0000FF">retractall</span>(<span style="color: #0000FF">diccionario</span>(<span style="color: #008000; font-weight: bold">_</span>)),
+  <span style="color: #0000FF">atom_codes</span>(<span style="color: #19177C">NombreDeArchivo</span>, <span style="color: #19177C">Arch</span>),
+  <span style="color: #0000FF">open</span>(<span style="color: #19177C">Arch</span>, <span style="color: #BA2121">read</span>, <span style="color: #19177C">Str</span>),
+  <span style="color: #0000FF">read_file</span>(<span style="color: #19177C">Str</span>,<span style="color: #008000; font-weight: bold">_</span>),
+  <span style="color: #0000FF">close</span>(<span style="color: #19177C">Str</span>).
+
+<span style="color: #0000FF">read_file</span>(<span style="color: #19177C">Stream</span>,[]) :- <span style="color: #0000FF">at_end_of_stream</span>(<span style="color: #19177C">Stream</span>).
+<span style="color: #0000FF">read_file</span>(<span style="color: #19177C">Stream</span>,[<span style="color: #19177C">X</span>|<span style="color: #19177C">L</span>]) :-
+    <span style="color: #666666">not</span>(<span style="color: #0000FF">at_end_of_stream</span>(<span style="color: #19177C">Stream</span>)),
+    <span style="color: #0000FF">read_line_to_codes</span>(<span style="color: #19177C">Stream</span>,<span style="color: #19177C">Codes</span>),
+    <span style="color: #0000FF">string_codes</span>(<span style="color: #19177C">X</span>, <span style="color: #19177C">Codes</span>),
+    <span style="color: #0000FF">assertz</span>(<span style="color: #0000FF">diccionario</span>(<span style="color: #19177C">X</span>)),
+    <span style="color: #0000FF">read_file</span>(<span style="color: #19177C">Stream</span>,<span style="color: #19177C">L</span>), !.
+
+
+<span style="color: #408080; font-style: italic">% listar mensajes secretos de ejemplo.</span>
+<span style="color: #0000FF">ej</span>(<span style="color: #666666">1</span>, [<span style="color: #BA2121">rombo</span>, <span style="color: #BA2121">cuadrado</span>, <span style="color: #BA2121">espacio</span>, <span style="color: #BA2121">perro</span>, <span style="color: #BA2121">cuadrado</span>, <span style="color: #BA2121">sol</span>, <span style="color: #BA2121">cuadrado</span>]).
+<span style="color: #408080; font-style: italic">% solo debería ser &quot;la cosa&quot; porque cuadrado != triangulo</span>
+<span style="color: #0000FF">ej</span>(<span style="color: #666666">2</span>, [<span style="color: #BA2121">rombo</span>, <span style="color: #BA2121">cuadrado</span>, <span style="color: #BA2121">espacio</span>, <span style="color: #BA2121">perro</span>, <span style="color: #BA2121">triangulo</span>, <span style="color: #BA2121">sol</span>, <span style="color: #BA2121">cuadrado</span>]).
+
+<span style="color: #0000FF">ej</span>(<span style="color: #666666">3</span>, [<span style="color: #BA2121">rombo</span>, <span style="color: #BA2121">cuadrado</span>, <span style="color: #BA2121">perro</span>, <span style="color: #BA2121">cuadrado</span>, <span style="color: #BA2121">sol</span>, <span style="color: #BA2121">luna</span>, <span style="color: #BA2121">triangulo</span>, <span style="color: #BA2121">estrella</span>, <span style="color: #BA2121">arbol</span>, <span style="color: #BA2121">gato</span>]).
+
+
+
+
+
+<span style="color: #408080; font-style: italic">% Ejercicio 1 %</span>
+<span style="color: #408080; font-style: italic">%% diccionario_lista(?C) si hay un diccionario cargado.</span>
+<span style="color: #0000FF">diccionario_lista</span>(<span style="color: #19177C">C</span>) :- <span style="color: #0000FF">diccionario</span>(<span style="color: #19177C">X</span>), <span style="color: #0000FF">string_codes</span>(<span style="color: #19177C">X</span>, <span style="color: #19177C">C</span>).
+
+
+<span style="color: #408080; font-style: italic">% Ejercicio 2 %</span>
+<span style="color: #408080; font-style: italic">% juntar_con(?L, ?J, ?R), pero dos tienen que estar instanciados.</span>
+<span style="color: #408080; font-style: italic">% Asumimos que si J aparece en L, entonces es porque es el caracter de corte.</span>
+<span style="color: #408080; font-style: italic">% Es decir, no se puede ingresar una lista dentro de L que contenga a J.</span>
+<span style="color: #408080; font-style: italic">% Si aparece J dos veces seguidas en R, es porque hubo una lista vacía en el medio.</span>
+<span style="color: #0000FF">juntar_con</span>([], <span style="color: #008000; font-weight: bold">_</span>, []).
+<span style="color: #0000FF">juntar_con</span>([<span style="color: #19177C">L</span>], <span style="color: #19177C">J</span>, <span style="color: #19177C">L</span>) :- <span style="color: #666666">not</span>(<span style="color: #0000FF">member</span>(<span style="color: #19177C">J</span>, <span style="color: #19177C">L</span>)).
+<span style="color: #0000FF">juntar_con</span>([<span style="color: #19177C">H</span> | [<span style="color: #19177C">L</span> | <span style="color: #19177C">LS</span>]], <span style="color: #19177C">J</span>, <span style="color: #19177C">R</span>) :- <span style="color: #0000FF">append</span>(<span style="color: #19177C">H</span>, [<span style="color: #19177C">J</span>], <span style="color: #19177C">Y</span>), <span style="color: #0000FF">append</span>(<span style="color: #19177C">Y</span>, <span style="color: #19177C">P</span>, <span style="color: #19177C">R</span>),
+                                     <span style="color: #0000FF">juntar_con</span>([<span style="color: #19177C">L</span> | <span style="color: #19177C">LS</span>], <span style="color: #19177C">J</span>, <span style="color: #19177C">P</span>), !.
+
+
+<span style="color: #408080; font-style: italic">% Ejercicio 3 %</span>
+<span style="color: #408080; font-style: italic">%% palabras(?S, ?P)</span>
+<span style="color: #0000FF">palabras</span>(<span style="color: #19177C">S</span>, <span style="color: #19177C">P</span>) :- <span style="color: #0000FF">juntar_con</span>(<span style="color: #19177C">P</span>, <span style="color: #BA2121">espacio</span>, <span style="color: #19177C">S</span>), !.
+
+
+<span style="color: #408080; font-style: italic">% Ejercicio 4 %</span>
+<span style="color: #408080; font-style: italic">% asignar_var(?A, ?MI, ?MF)</span>
+<span style="color: #408080; font-style: italic">% Si la variable ya esta mapeada, se asigna a MF el mismo diccionario MI.</span>
+<span style="color: #0000FF">asignar_var</span>(<span style="color: #19177C">A</span>, <span style="color: #19177C">MI</span>, <span style="color: #19177C">MI</span>) :- <span style="color: #0000FF">esta_mapeada</span>(<span style="color: #19177C">A</span>, <span style="color: #19177C">MI</span>). 
+<span style="color: #408080; font-style: italic">% Sino, MF es el resultado de agregar A a MI con algun valor (_). </span>
+<span style="color: #0000FF">asignar_var</span>(<span style="color: #19177C">A</span>, <span style="color: #19177C">MI</span>, <span style="color: #19177C">MF</span>) :- <span style="color: #666666">not</span>(<span style="color: #0000FF">esta_mapeada</span>(<span style="color: #19177C">A</span>, <span style="color: #19177C">MI</span>)), <span style="color: #0000FF">append</span>(<span style="color: #19177C">MI</span>, [(<span style="color: #19177C">A</span>, <span style="color: #008000; font-weight: bold">_</span>)], <span style="color: #19177C">MF</span>).
+
+<span style="color: #408080; font-style: italic">% Para ver si esta mapeada, se pregunta si existe la tupla (A, _)</span>
+<span style="color: #408080; font-style: italic">% es decir, figura A mapeada con algun valor (_) en MI.</span>
+<span style="color: #408080; font-style: italic">%% esta_mapeada(?A, ?MI)</span>
+<span style="color: #0000FF">esta_mapeada</span>(<span style="color: #19177C">A</span>, <span style="color: #19177C">MI</span>) :- <span style="color: #0000FF">member</span>((<span style="color: #19177C">A</span>, <span style="color: #008000; font-weight: bold">_</span>), <span style="color: #19177C">MI</span>).
+
+
+<span style="color: #408080; font-style: italic">% Ejercicio 5 %</span>
+<span style="color: #408080; font-style: italic">%% palabras_con_variables(?P, ?V)</span>
+<span style="color: #0000FF">palabras_con_variables</span>(<span style="color: #19177C">P</span>, <span style="color: #19177C">V</span>) :- <span style="color: #0000FF">flatten</span>(<span style="color: #19177C">P</span>, <span style="color: #19177C">Y</span>), <span style="color: #0000FF">asignar_variables</span>(<span style="color: #19177C">Y</span>, <span style="color: #19177C">MF</span>), <span style="color: #0000FF">dividir</span>(<span style="color: #19177C">P</span>, <span style="color: #19177C">MF</span>, <span style="color: #19177C">V</span>), !.
+
+<span style="color: #408080; font-style: italic">%% dividir(?PS, ?MF, ?VS)</span>
+<span style="color: #0000FF">dividir</span>([], <span style="color: #008000; font-weight: bold">_</span>, []).
+<span style="color: #0000FF">dividir</span>([<span style="color: #19177C">P</span> | <span style="color: #19177C">PS</span>], <span style="color: #19177C">MF</span>, [<span style="color: #19177C">V</span> | <span style="color: #19177C">VS</span>]) :- <span style="color: #0000FF">cambiar_a_variables</span>(<span style="color: #19177C">P</span>, <span style="color: #19177C">MF</span>, <span style="color: #19177C">V</span>), <span style="color: #0000FF">dividir</span>(<span style="color: #19177C">PS</span>, <span style="color: #19177C">MF</span>, <span style="color: #19177C">VS</span>).
+
+<span style="color: #408080; font-style: italic">%% cambiar_a_variables(?AS, ?MF, ?VS)</span>
+<span style="color: #0000FF">cambiar_a_variables</span>([], <span style="color: #008000; font-weight: bold">_</span>, []).
+<span style="color: #0000FF">cambiar_a_variables</span>([<span style="color: #19177C">A</span> | <span style="color: #19177C">AS</span>], <span style="color: #19177C">MF</span>, [<span style="color: #19177C">V</span> | <span style="color: #19177C">VS</span>]) :- <span style="color: #0000FF">member</span>((<span style="color: #19177C">A</span>, <span style="color: #19177C">V</span>), <span style="color: #19177C">MF</span>), <span style="color: #0000FF">cambiar_a_variables</span>(<span style="color: #19177C">AS</span>, <span style="color: #19177C">MF</span>, <span style="color: #19177C">VS</span>).
+
+<span style="color: #408080; font-style: italic">%% asignar_variables(?PS, ?MI)</span>
+<span style="color: #0000FF">asignar_variables</span>([], <span style="color: #008000; font-weight: bold">_</span>).
+<span style="color: #0000FF">asignar_variables</span>([<span style="color: #19177C">P</span> | <span style="color: #19177C">PS</span>], <span style="color: #19177C">MI</span>) :- <span style="color: #0000FF">asignar_var</span>(<span style="color: #19177C">P</span>, <span style="color: #19177C">MI</span>, <span style="color: #19177C">MF</span>), <span style="color: #0000FF">asignar_variables</span>(<span style="color: #19177C">PS</span>, <span style="color: #19177C">MF</span>).
+
+
+<span style="color: #408080; font-style: italic">% Ejercicio 6 %</span>
+<span style="color: #408080; font-style: italic">%% quitar(+E, +LS, ?R)</span>
+<span style="color: #0000FF">quitar</span>(<span style="color: #008000; font-weight: bold">_</span>, [], []).
+<span style="color: #0000FF">quitar</span>(<span style="color: #19177C">E</span>, [<span style="color: #19177C">Y</span> | <span style="color: #19177C">LS</span>], <span style="color: #19177C">R</span>) :- <span style="color: #19177C">Y</span> <span style="color: #666666">==</span> <span style="color: #19177C">E</span>, <span style="color: #0000FF">quitar</span>(<span style="color: #19177C">E</span>, <span style="color: #19177C">LS</span>, <span style="color: #19177C">R</span>).
+<span style="color: #0000FF">quitar</span>(<span style="color: #19177C">E</span>, [<span style="color: #19177C">L</span> | <span style="color: #19177C">LS</span>], [<span style="color: #19177C">L</span> | <span style="color: #19177C">R</span>]) :- <span style="color: #19177C">L</span> <span style="color: #BA2121">\==</span> <span style="color: #19177C">E</span>, <span style="color: #0000FF">quitar</span>(<span style="color: #19177C">E</span>, <span style="color: #19177C">LS</span>, <span style="color: #19177C">R</span>).
+
+
+<span style="color: #408080; font-style: italic">% Ejercicio 7 %</span>
+<span style="color: #408080; font-style: italic">%% cant_distintos(+XS, ?N)</span>
+<span style="color: #0000FF">cant_distintos</span>([], <span style="color: #666666">0</span>).
+<span style="color: #0000FF">cant_distintos</span>([<span style="color: #19177C">X</span> | <span style="color: #19177C">XS</span>], <span style="color: #19177C">N</span>) :- <span style="color: #0000FF">quitar</span>(<span style="color: #19177C">X</span>, <span style="color: #19177C">XS</span>, <span style="color: #19177C">Y</span>), <span style="color: #0000FF">cant_distintos</span>(<span style="color: #19177C">Y</span>, <span style="color: #19177C">P</span>), <span style="color: #19177C">N</span> <span style="color: #666666">is</span> <span style="color: #19177C">P</span> <span style="color: #666666">+</span> <span style="color: #666666">1.</span>
+
+
+<span style="color: #408080; font-style: italic">% Ejercicio 8 %</span>
+<span style="color: #408080; font-style: italic">%% descifrar(?S, ?M) M puede estar instanciada solo si S lo esta</span>
+<span style="color: #0000FF">descifrar</span>(<span style="color: #19177C">S</span>, <span style="color: #19177C">M</span>) :- <span style="color: #0000FF">palabras</span>(<span style="color: #19177C">S</span>, <span style="color: #19177C">P</span>), <span style="color: #0000FF">palabras_con_variables</span>(<span style="color: #19177C">P</span>, <span style="color: #19177C">V</span>), <span style="color: #0000FF">encontrar_codigos</span>(<span style="color: #19177C">V</span>),
+                    <span style="color: #0000FF">cant_distintos</span>(<span style="color: #19177C">P</span>, <span style="color: #19177C">N1</span>), <span style="color: #0000FF">cant_distintos</span>(<span style="color: #19177C">V</span>, <span style="color: #19177C">N2</span>), <span style="color: #19177C">N1</span> <span style="color: #666666">is</span> <span style="color: #19177C">N2</span>, <span style="color: #0000FF">pasar_a_string</span>(<span style="color: #19177C">V</span>, <span style="color: #19177C">M</span>).
+
+<span style="color: #408080; font-style: italic">%% encontrar_codigos(?VS)</span>
+<span style="color: #0000FF">encontrar_codigos</span>([]).
+<span style="color: #0000FF">encontrar_codigos</span>([<span style="color: #19177C">V</span> | <span style="color: #19177C">VS</span>]) :- <span style="color: #0000FF">encontrar_codigos</span>(<span style="color: #19177C">VS</span>), <span style="color: #0000FF">diccionario_lista</span>(<span style="color: #19177C">V</span>).
+
+<span style="color: #408080; font-style: italic">%% pasar_a_string(?X, ?Y)</span>
+<span style="color: #0000FF">pasar_a_string</span>(<span style="color: #19177C">X</span>, <span style="color: #19177C">Y</span>) :- <span style="color: #0000FF">juntar_con</span>(<span style="color: #19177C">X</span>, <span style="color: #666666">32</span>, <span style="color: #19177C">Z</span>), <span style="color: #0000FF">string_codes</span>(<span style="color: #19177C">Y</span>, <span style="color: #19177C">Z</span>).
+
+
+<span style="color: #408080; font-style: italic">% Ejercicio 9 %</span>
+<span style="color: #408080; font-style: italic">%% descifrar_sin_espacios(+A, ?B)</span>
+<span style="color: #0000FF">descifrar_sin_espacios</span>(<span style="color: #19177C">A</span>, <span style="color: #19177C">B</span>) :- <span style="color: #0000FF">generar_listas</span>(<span style="color: #19177C">A</span>, <span style="color: #19177C">C</span>), <span style="color: #0000FF">descifrar</span>(<span style="color: #19177C">C</span>, <span style="color: #19177C">B</span>).
+
+<span style="color: #408080; font-style: italic">%% generar_listas(?AS, ?BS) Si BS esta instanciada y AS no,</span>
+<span style="color: #408080; font-style: italic">%% entonces le asigna a AS el caracter espacio, que asumimos como pre condicion que AS no lo tenia.</span>
+<span style="color: #0000FF">generar_listas</span>([], []).
+<span style="color: #0000FF">generar_listas</span>([<span style="color: #19177C">A</span> | <span style="color: #19177C">AS</span>], [<span style="color: #19177C">A</span> | <span style="color: #19177C">BS</span>]) :- <span style="color: #0000FF">poner_espacios</span>(<span style="color: #19177C">AS</span>, <span style="color: #19177C">BS</span>).
+
+<span style="color: #408080; font-style: italic">%% poner_espacios(?AS, ?BS)</span>
+<span style="color: #0000FF">poner_espacios</span>([], []).
+<span style="color: #0000FF">poner_espacios</span>([<span style="color: #19177C">A</span> | <span style="color: #19177C">AS</span>], [<span style="color: #BA2121">espacio</span> | [<span style="color: #19177C">A</span> | <span style="color: #19177C">BS</span>]]) :- <span style="color: #0000FF">poner_espacios</span>(<span style="color: #19177C">AS</span>, <span style="color: #19177C">BS</span>).
+<span style="color: #0000FF">poner_espacios</span>([<span style="color: #19177C">A</span> | <span style="color: #19177C">AS</span>], [<span style="color: #19177C">A</span> | <span style="color: #19177C">BS</span>]) :- <span style="color: #0000FF">poner_espacios</span>(<span style="color: #19177C">AS</span>, <span style="color: #19177C">BS</span>).
+
+
+<span style="color: #408080; font-style: italic">% Ejercicio 10 %</span>
+<span style="color: #408080; font-style: italic">%% mensajes_mas_parejos(+S, ?M)</span>
+<span style="color: #0000FF">mensajes_mas_parejos</span>(<span style="color: #19177C">S</span>, <span style="color: #19177C">M</span>):- <span style="color: #0000FF">descifrar_sin_espacios</span>(<span style="color: #19177C">S</span>, <span style="color: #19177C">M</span>), <span style="color: #0000FF">es_minimo</span>(<span style="color: #19177C">S</span>, <span style="color: #19177C">M</span>).
+
+<span style="color: #408080; font-style: italic">%% es_minimo(+S, ?M)</span>
+<span style="color: #0000FF">es_minimo</span>(<span style="color: #19177C">S</span>, <span style="color: #19177C">M</span>) :- <span style="color: #666666">not</span>(<span style="color: #0000FF">existe_menor</span>(<span style="color: #19177C">S</span>, <span style="color: #19177C">M</span>)).
+
+<span style="color: #408080; font-style: italic">%% existe_menor(+S, ?M)</span>
+<span style="color: #0000FF">existe_menor</span>(<span style="color: #19177C">S</span>, <span style="color: #19177C">M</span>) :- <span style="color: #0000FF">descifrar_sin_espacios</span>(<span style="color: #19177C">S</span>, <span style="color: #19177C">N</span>), <span style="color: #0000FF">desvio_standard</span>(<span style="color: #19177C">M</span>, <span style="color: #19177C">A</span>), <span style="color: #0000FF">desvio_standard</span>(<span style="color: #19177C">N</span>, <span style="color: #19177C">B</span>),
+                       <span style="color: #19177C">A</span> <span style="color: #666666">&gt;</span> <span style="color: #19177C">B</span>.
+
+<span style="color: #408080; font-style: italic">%% desvio_standard(+M, ?P)</span>
+<span style="color: #0000FF">desvio_standard</span>(<span style="color: #19177C">M</span>,<span style="color: #19177C">P</span>) :- <span style="color: #0000FF">string_codes</span>(<span style="color: #19177C">M</span>, <span style="color: #19177C">C</span>), <span style="color: #0000FF">juntar_con</span>(<span style="color: #19177C">L</span>,<span style="color: #666666">32</span>, <span style="color: #19177C">C</span>), <span style="color: #0000FF">tamanio_promedio</span>(<span style="color: #19177C">L</span>, <span style="color: #19177C">N</span>),
+                         <span style="color: #0000FF">distancia_al_promedio</span>(<span style="color: #19177C">L</span>, <span style="color: #19177C">N</span>, <span style="color: #19177C">Q</span>), <span style="color: #0000FF">length</span>(<span style="color: #19177C">L</span>, <span style="color: #19177C">R</span>), <span style="color: #19177C">P</span> <span style="color: #666666">=</span> <span style="color: #0000FF">sqrt</span>(<span style="color: #19177C">Q</span><span style="color: #666666">/</span><span style="color: #19177C">R</span>).
+
+<span style="color: #408080; font-style: italic">%% distancia_al_promedio(+LS, +N, ?P)</span>
+<span style="color: #0000FF">distancia_al_promedio</span>([], <span style="color: #008000; font-weight: bold">_</span>, <span style="color: #666666">0</span>).
+<span style="color: #0000FF">distancia_al_promedio</span>([<span style="color: #19177C">L</span> | <span style="color: #19177C">LS</span>] , <span style="color: #19177C">N</span>, <span style="color: #19177C">P</span>) :- <span style="color: #0000FF">length</span>(<span style="color: #19177C">L</span>, <span style="color: #19177C">M</span>), <span style="color: #0000FF">distancia_al_promedio</span>(<span style="color: #19177C">LS</span>, <span style="color: #19177C">N</span>, <span style="color: #19177C">O</span>),
+                                           <span style="color: #19177C">P</span> <span style="color: #666666">is</span> <span style="color: #19177C">O</span> <span style="color: #666666">+</span> (<span style="color: #19177C">M</span><span style="color: #666666">-</span> <span style="color: #19177C">N</span>) <span style="color: #666666">*</span> (<span style="color: #19177C">M</span> <span style="color: #666666">-</span> <span style="color: #19177C">N</span>).
+
+<span style="color: #408080; font-style: italic">%% tamanio_promedio(+L, ?P)</span>
+<span style="color: #0000FF">tamanio_promedio</span>([], <span style="color: #666666">0</span>).
+<span style="color: #0000FF">tamanio_promedio</span>(<span style="color: #19177C">L</span>, <span style="color: #19177C">P</span>) :- <span style="color: #0000FF">suma_tamanos</span>(<span style="color: #19177C">L</span>,<span style="color: #19177C">O</span>), <span style="color: #0000FF">length</span>(<span style="color: #19177C">L</span>, <span style="color: #19177C">N</span>), <span style="color: #19177C">P</span> <span style="color: #666666">is</span> <span style="color: #19177C">O</span><span style="color: #666666">/</span><span style="color: #19177C">N</span>.
+
+<span style="color: #408080; font-style: italic">%% suma_tamanos(+LS, ?P)</span>
+<span style="color: #0000FF">suma_tamanos</span>([], <span style="color: #666666">0</span>).
+<span style="color: #0000FF">suma_tamanos</span>([<span style="color: #19177C">L</span> | <span style="color: #19177C">LS</span>], <span style="color: #19177C">P</span>) :- <span style="color: #0000FF">length</span>(<span style="color: #19177C">L</span>, <span style="color: #19177C">M</span>), <span style="color: #0000FF">suma_tamanos</span>(<span style="color: #19177C">LS</span>, <span style="color: #19177C">O</span>), <span style="color: #19177C">P</span> <span style="color: #666666">is</span> <span style="color: #19177C">M</span> <span style="color: #666666">+</span> <span style="color: #19177C">O</span>.
+</pre></div>
+</font>
+</body>
+</html>
