@@ -1,0 +1,11 @@
+﻿Merge branch 'des-arreglos-agus'
+Ejercicio 2 Arreglado.
+Ejercicio 9 OK, en teoria.
+Los demas ejercicios tienen un reporte de errores que no pude solucionar.
+
+# Please enter a commit message to explain why this merge is necessary,
+# especially if it merges an updated upstream into a topic branch.
+#
+# Lines starting with '#' will be ignored, and an empty message aborts
+# the commit.
+

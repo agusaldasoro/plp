@@ -1,0 +1,18 @@
+﻿
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# Explicit paths specified without -i or -o; assuming --only paths...
+# On branch master
+# Your branch is up-to-date with 'origin/master'.
+#
+# Changes to be committed:
+#	deleted:    TP2/esqueleto-diccionarios/esqueleto.pl
+#
+# Untracked files:
+#	TP2/Imprimible/
+#	TP2/Informe/
+#	TP2/esqueleto-diccionarios/tp2.pl
+#	llbund4r.wsi.txt
+#	qdrcey15.q3o.txt
+#
+
